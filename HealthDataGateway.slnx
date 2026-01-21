@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="HealthDataGateway.Data/HealthDataGateway.Data.csproj" />
+  <Project Path="HealthDataGateway.Services/HealthDataGateway.Services.csproj" />
+  <Project Path="HealthDataGateway.Web/HealthDataGateway.Web.csproj" />
+</Solution>

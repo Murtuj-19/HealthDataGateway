@@ -1,0 +1,109 @@
+﻿@page
+@model HealthDataGateway.Web.Pages.SourceHospital.CreateTransferModel
+@{
+    ViewData["Title"] = "Create Transfer Request";
+}
+
+<div class="container mt-4 fade-in">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h3 class="mb-0 fw-bold">
+                        <i class="bi bi-send-fill"></i> Create Transfer Request
+                    </h3>
+                </div>
+
+                <div class="card-body p-5">
+                    @if (Model.Patient != null)
+                    {
+                        <div class="card bg-primary bg-opacity-10 border-primary border-2 mb-4">
+                            <div class="card-body">
+                                <h5 class="fw-bold mb-3">Patient Information</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Name:</strong> @Model.Patient.FullName</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Patient ID:</strong> @Model.Patient.LocalPatientId</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p>
+                                            <strong>DOB:</strong>
+                                            @if (Model.Patient.DOB.HasValue)
+                                            {
+                                                @Model.Patient.DOB.Value.ToString("MMM dd, yyyy")
+                                            }
+                                            else
+                                            {
+                                                <span>Not specified</span>
+                                            }
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Gender:</strong> @Model.Patient.Gender</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (Model.Patient.Diagnoses != null && Model.Patient.Diagnoses.Any())
+                        {
+                            <div class="card bg-warning bg-opacity-10 border-warning border-2 mb-4">
+                                <div class="card-body">
+                                    <h6 class="fw-bold mb-3">Medical Diagnoses</h6>
+                                    <ul>
+                                        @foreach (var diagnosis in Model.Patient.Diagnoses)
+                                        {
+                                            <li>
+                                                @diagnosis.DiagnosisText
+                                                <small class="text-muted">(@diagnosis.DiagnosedAt.ToString("MMM dd, yyyy"))</small>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+
+                        <form method="post">
+                            <input type="hidden" asp-for="PatientId" />
+
+                            <div class="mb-4">
+                                <label asp-for="TargetHospitalId" class="form-label fw-semibold fs-5">
+                                    Select Target Hospital <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="TargetHospitalId" asp-items="Model.Hospitals"
+                                        class="form-select form-select-lg" required>
+                                    <option value="">-- Select Destination Hospital --</option>
+                                </select>
+                                <span asp-validation-for="TargetHospitalId" class="text-danger"></span>
+                            </div>
+
+                            <div class="alert alert-success border-2 shadow-sm">
+                                <i class="bi bi-shield-lock-fill fs-3"></i>
+                                <strong>Secure Transfer:</strong> Data will be encrypted using AES-256 encryption.
+                            </div>
+
+                            <div class="d-grid gap-3 d-md-flex justify-content-md-between mt-5">
+                                <a asp-page="./Index" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-arrow-left"></i> Back
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg shadow-lg">
+                                    <i class="bi bi-send-fill"></i> Create & Send Request
+                                </button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">Patient not found.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

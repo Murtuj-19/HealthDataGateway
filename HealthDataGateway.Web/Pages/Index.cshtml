@@ -1,0 +1,39 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Health Data Gateway</h1>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <a class="card text-decoration-none text-dark h-100" asp-page="/Connector/Index">
+                <div class="card-body">
+                    <h4 class="card-title">Connector</h4>
+                    <p class="card-text">Open connector dashboard to process and deliver transfer requests.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a class="card text-decoration-none text-dark h-100" asp-page="/SourceHospital/Index">
+                <div class="card-body">
+                    <h4 class="card-title">Source Hospitals</h4>
+                    <p class="card-text">Manage patients and create transfer requests.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a class="card text-decoration-none text-dark h-100" asp-page="/TargetHospital/Index">
+                <div class="card-body">
+                    <h4 class="card-title">Target Hospitals</h4>
+                    <p class="card-text">View incoming requests and respond.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+</div>

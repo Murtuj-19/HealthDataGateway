@@ -1,0 +1,84 @@
+﻿@page
+@model HealthDataGateway.Web.Pages.SourceHospital.CreatePatientModel
+@{
+    ViewData["Title"] = "Register New Patient";
+}
+
+<div class="container mt-4 fade-in">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h3 class="mb-0 fw-bold">
+                        <i class="bi bi-person-plus-fill"></i> Register New Patient
+                    </h3>
+                    <p class="mb-0 mt-2 opacity-75">Add patient information to the system</p>
+                </div>
+
+                <div class="card-body p-5">
+                    <form method="post">
+                        <div class="mb-4">
+                            <label asp-for="Patient.LocalPatientId" class="form-label fw-semibold">
+                                Patient ID <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Patient.LocalPatientId" class="form-control form-control-lg"
+                                   placeholder="e.g., P001" required />
+                            <span asp-validation-for="Patient.LocalPatientId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Patient.FullName" class="form-label fw-semibold">
+                                Full Name <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Patient.FullName" class="form-control form-control-lg"
+                                   placeholder="Enter full name" required />
+                            <span asp-validation-for="Patient.FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="Patient.DOB" class="form-label fw-semibold">
+                                    Date of Birth
+                                </label>
+                                <input asp-for="Patient.DOB" type="date" class="form-control form-control-lg" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Patient.Gender" class="form-label fw-semibold">
+                                    Gender
+                                </label>
+                                <select asp-for="Patient.Gender" class="form-select form-select-lg">
+                                    <option value="">Select gender...</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="O">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="DiagnosisText" class="form-label fw-semibold">
+                                Initial Diagnosis (Optional)
+                            </label>
+                            <textarea asp-for="DiagnosisText" class="form-control" rows="4"
+                                      placeholder="Enter initial diagnosis..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-between mt-5">
+                            <a asp-page="./Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg shadow">
+                                <i class="bi bi-save"></i> Register Patient
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,155 @@
+@page
+@model HealthDataGateway.Web.Pages.TargetHospital.IndexModel
+@{
+    ViewData["Title"] = "Target Hospital Dashboard";
+}
+
+<div class="container-fluid fade-in">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="card-body text-white p-4">
+                    <h1 class="display-5 fw-bold mb-2">
+                        <i class="bi bi-hospital-fill"></i> Target Hospital Dashboard
+                    </h1>
+                    <p class="lead mb-0">St. Mary's Medical Center - Incoming Requests</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow">
+            <i class="bi bi-check-circle-fill fs-5"></i>
+            <strong>Success!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body text-white p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase opacity-75">Pending</h6>
+                            <h2 class="display-3 fw-bold">@Model.PendingCount</h2>
+                        </div>
+                        <i class="bi bi-clock-history opacity-50" style="font-size: 5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                <div class="card-body text-white p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase opacity-75">Accepted</h6>
+                            <h2 class="display-3 fw-bold">@Model.AcceptedCount</h2>
+                        </div>
+                        <i class="bi bi-check-circle-fill opacity-50" style="font-size: 5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <div class="card-body text-white p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase opacity-75">Rejected</h6>
+                            <h2 class="display-3 fw-bold">@Model.RejectedCount</h2>
+                        </div>
+                        <i class="bi bi-x-circle-fill opacity-50" style="font-size: 5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header text-white py-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-inbox-fill"></i> Incoming Transfer Requests
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    @if (Model.IncomingRequests.Count == 0)
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-inbox text-muted" style="font-size: 5rem;"></i>
+                            <p class="text-muted mt-3 fs-5">No incoming requests</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-info">
+                                    <tr>
+                                        <th>Request ID</th>
+                                        <th>Patient Name</th>
+                                        <th>Source Hospital</th>
+                                        <th>Status</th>
+                                        <th>Received At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var request in Model.IncomingRequests)
+                                    {
+                                        <tr>
+                                            <td><strong>#@request.IncomingRequestId</strong></td>
+                                            <td>
+                                                @if (request.ConnectorRequest?.TransferRequest?.Patient != null)
+                                                {
+                                                    @request.ConnectorRequest.TransferRequest.Patient.FullName
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">N/A</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">
+                                                    @request.SourceHospital.HospitalName
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (request.IncomingStatus == "PENDING")
+                                                {
+                                                    <span class="badge bg-warning">PENDING</span>
+                                                }
+                                                else if (request.IncomingStatus == "ACCEPTED")
+                                                {
+                                                    <span class="badge bg-success">ACCEPTED</span>
+                                                }
+                                                else if (request.IncomingStatus == "REJECTED")
+                                                {
+                                                    <span class="badge bg-danger">REJECTED</span>
+                                                }
+                                            </td>
+                                            <td><small>@request.ReceivedAt.ToString("MMM dd, yyyy HH:mm")</small></td>
+                                            <td>
+                                                <a asp-page="./ViewRequest" asp-route-id="@request.IncomingRequestId"
+                                                   class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-eye-fill"></i> Review
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

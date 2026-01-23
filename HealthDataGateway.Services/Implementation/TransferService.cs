@@ -1,6 +1,7 @@
 ﻿using HealthDataGateway.Data;
 using HealthDataGateway.Data.Models;
 using HealthDataGateway.Services.Interfaces;
+using HealthDataGateway.Services.Constants;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace HealthDataGateway.Services.Implementation
                 SourceHospitalId = sourceHospitalId,
                 PatientId = patientId,
                 TargetHospitalId = targetHospitalId,
-                Status = "CREATED",
+                Status = Statuses.Transfer.Created,
                 CreatedAt = DateTime.Now
             };
 
@@ -56,16 +57,14 @@ namespace HealthDataGateway.Services.Implementation
                     .ThenInclude(p => p.Diagnoses)
                 .FirstOrDefaultAsync(t => t.TransferRequestId == transferRequestId);
 
-            if (transferRequest == null || transferRequest.Status != "CREATED")
+            if (transferRequest == null || transferRequest.Status != Statuses.Transfer.Created)
                 return false;
 
-            // Create payload with patient data
+            // Create payload with minimal PHI to meet your requirement (select 1-2 fields as requested)
             var payload = new
             {
                 transferRequest.PatientId,
                 transferRequest.Patient!.FullName,
-                transferRequest.Patient.DOB,
-                transferRequest.Patient.Gender,
                 transferRequest.Patient.LocalPatientId,
                 Diagnoses = transferRequest.Patient.Diagnoses.Select(d => new
                 {
@@ -77,37 +76,49 @@ namespace HealthDataGateway.Services.Implementation
             string jsonPayload = JsonSerializer.Serialize(payload);
             byte[] encryptedPayload = _encryptionService.Encrypt(jsonPayload);
 
-            // Create connector request
-            var connectorRequest = new ConnectorRequest
+            // Use a transaction to ensure connector request and transfer status update are atomic
+            await using var tx = await _context.Database.BeginTransactionAsync();
+            try
             {
-                TransferRequestId = transferRequestId,
-                EncryptedPayload = encryptedPayload,
-                EncryptionType = "AES-256",
-                AuthType = "OAuth2",
-                IsFHIRCompliant = true,
-                Status = "PROCESSING",
-                CreatedAt = DateTime.Now
-            };
+                var connectorRequest = new ConnectorRequest
+                {
+                    TransferRequestId = transferRequestId,
+                    EncryptedPayload = encryptedPayload,
+                    EncryptionType = "AES-256",
+                    AuthType = "OAuth2",
+                    IsFHIRCompliant = true,
+                    Status = Statuses.Connector.Processing,
+                    CreatedAt = DateTime.Now
+                };
 
-            _context.ConnectorRequests.Add(connectorRequest);
+                _context.ConnectorRequests.Add(connectorRequest);
 
-            // Update transfer request status
-            transferRequest.Status = "QUEUED";
+                // Update transfer request status
+                transferRequest.Status = Statuses.Transfer.Queued;
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            // Log activity
-            _context.ActivityLogs.Add(new ActivityLog
+                // Log activity for queuing connector
+                _context.ActivityLogs.Add(new ActivityLog
+                {
+                    EntityName = "ConnectorRequest",
+                    EntityId = connectorRequest.ConnectorRequestId,
+                    Action = "QUEUED",
+                    PerformedBy = "SOURCE_HOSPITAL",
+                    LoggedAt = DateTime.Now
+                });
+
+                await _context.SaveChangesAsync();
+
+                await tx.CommitAsync();
+
+                return true;
+            }
+            catch
             {
-                EntityName = "ConnectorRequest",
-                EntityId = connectorRequest.ConnectorRequestId,
-                Action = "QUEUED",
-                PerformedBy = "SOURCE_HOSPITAL",
-                LoggedAt = DateTime.Now
-            });
-            await _context.SaveChangesAsync();
-
-            return true;
+                await tx.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<List<TransferRequest>> GetTransferRequestsByHospitalAsync(int hospitalId)
@@ -138,7 +149,7 @@ namespace HealthDataGateway.Services.Implementation
             if (transferRequest == null)
                 return false;
 
-            transferRequest.Status = "CANCELLED";
+            transferRequest.Status = Statuses.Transfer.Cancelled;
             await _context.SaveChangesAsync();
 
             return true;

@@ -4,154 +4,310 @@
     ViewData["Title"] = "Review Transfer Request";
 }
 
-<div class="container mt-4 fade-in">
+<style>
+    .info-card {
+        border-radius: 10px;
+        border: 2px solid;
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-card.primary {
+        border-color: #4facfe;
+        background: linear-gradient(135deg, rgba(79, 172, 254, 0.05) 0%, rgba(0, 242, 254, 0.05) 100%);
+    }
+
+    .info-card.security {
+        border-color: #27ae60;
+        background: linear-gradient(135deg, rgba(39, 174, 96, 0.05) 0%, rgba(46, 204, 113, 0.05) 100%);
+    }
+
+    .patient-data-box {
+        background: #f8f9fa;
+        border-left: 4px solid #4facfe;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        overflow-x: auto;
+    }
+
+    .decision-section {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 30px;
+        border-radius: 12px;
+        margin-top: 30px;
+    }
+
+    .btn-accept {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-accept:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(67, 233, 123, 0.3);
+        color: white;
+    }
+
+    .btn-reject {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        border: none;
+        color: #333;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-reject:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(250, 112, 154, 0.3);
+        color: #333;
+    }
+
+    .status-badge {
+        font-size: 1rem;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .remarks-input {
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        padding: 12px 15px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    .remarks-input:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.15);
+    }
+
+    .icon-badge {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 12px;
+        font-size: 1.2rem;
+    }
+
+    .security-check {
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .security-check:last-child {
+        border-bottom: none;
+    }
+
+    .security-check i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+</style>
+
+<div class="container-lg fade-in" style="padding-top: 20px;">
     <div class="row justify-content-center">
-        <div class="col-xl-10">
+        <div class="col-lg-10">
             @if (Model.IncomingRequest != null)
             {
                 <div class="card border-0 shadow-lg mb-4">
                     <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                         <h3 class="mb-1 fw-bold">
-                            <i class="bi bi-file-earmark-medical-fill"></i> Transfer Request Review
+                            <i class="bi bi-file-earmark-medical-fill"></i> Patient Transfer Request Review
                         </h3>
-                        <p class="mb-0">Request ID: #@Model.IncomingRequest.IncomingRequestId</p>
+                        <p class="mb-0">
+                            <i class="bi bi-info-circle"></i> Request ID: <span class="badge bg-light text-dark">#@Model.IncomingRequest.IncomingRequestId</span>
+                        </p>
                     </div>
 
-                    <div class="card-body p-4">
+                    <div class="card-body p-5">
                         <div class="row g-4 mb-4">
-                            <div class="col-md-6">
-                                <div class="card bg-primary bg-opacity-10 border-primary h-100">
+                            <!-- Request Information Card -->
+                            <div class="col-lg-6">
+                                <div class="info-card primary">
                                     <div class="card-body">
-                                        <h5 class="fw-bold mb-3">Request Information</h5>
-                                        <table class="table table-borderless">
-                                            <tr>
-                                                <td><strong>Request ID:</strong></td>
-                                                <td>#@Model.IncomingRequest.IncomingRequestId</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Source Hospital:</strong></td>
-                                                <td>@Model.IncomingRequest.SourceHospital.HospitalName</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Received At:</strong></td>
-                                                <td>@Model.IncomingRequest.ReceivedAt.ToString("MMM dd, yyyy HH:mm")</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Status:</strong></td>
-                                                <td>
-                                                    @if (Model.IncomingRequest.IncomingStatus == "PENDING")
-                                                    {
-                                                        <span class="badge bg-warning">PENDING</span>
-                                                    }
-                                                    else if (Model.IncomingRequest.IncomingStatus == "ACCEPTED")
-                                                    {
-                                                        <span class="badge bg-success">ACCEPTED</span>
-                                                    }
-                                                    else if (Model.IncomingRequest.IncomingStatus == "REJECTED")
-                                                    {
-                                                        <span class="badge bg-danger">REJECTED</span>
-                                                    }
-                                                </td>
-                                            </tr>
-                                        </table>
+                                        <h5 class="fw-bold mb-4">
+                                            <i class="bi bi-info-circle-fill" style="color: #4facfe;"></i> Request Information
+                                        </h5>
+                                        <div class="security-check">
+                                            <strong>Request ID:</strong>
+                                            <span class="ms-2 badge bg-light text-dark">#@Model.IncomingRequest.IncomingRequestId</span>
+                                        </div>
+                                        <div class="security-check">
+                                            <strong>Source Hospital:</strong>
+                                            <span class="ms-2">@Model.IncomingRequest.SourceHospital.HospitalName</span>
+                                        </div>
+                                        <div class="security-check">
+                                            <strong>Received At:</strong>
+                                            <span class="ms-2 text-muted">@Model.IncomingRequest.ReceivedAt.ToString("MMM dd, yyyy HH:mm:ss")</span>
+                                        </div>
+                                        <div class="security-check">
+                                            <strong>Status:</strong>
+                                            <span class="ms-2">
+                                                @if (Model.IncomingRequest.IncomingStatus == "PENDING")
+                                                {
+                                                    <span class="badge status-badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                                                        <i class="bi bi-hourglass-split"></i> PENDING
+                                                    </span>
+                                                }
+                                                else if (Model.IncomingRequest.IncomingStatus == "ACCEPTED")
+                                                {
+                                                    <span class="badge status-badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                                                        <i class="bi bi-check-circle-fill"></i> ACCEPTED
+                                                    </span>
+                                                }
+                                                else if (Model.IncomingRequest.IncomingStatus == "REJECTED")
+                                                {
+                                                    <span class="badge status-badge" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: #333;">
+                                                        <i class="bi bi-x-circle-fill"></i> REJECTED
+                                                    </span>
+                                                }
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <div class="card bg-success bg-opacity-10 border-success h-100">
+                            <!-- Security Information Card -->
+                            <div class="col-lg-6">
+                                <div class="info-card security">
                                     <div class="card-body">
-                                        <h5 class="fw-bold mb-3">Security Information</h5>
-                                        <table class="table table-borderless">
-                                            <tr>
-                                                <td><strong>Encryption:</strong></td>
-                                                <td>@Model.IncomingRequest.ConnectorRequest.EncryptionType</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Auth Type:</strong></td>
-                                                <td>@Model.IncomingRequest.ConnectorRequest.AuthType</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>FHIR Compliant:</strong></td>
-                                                <td>
-                                                    @if (Model.IncomingRequest.ConnectorRequest.IsFHIRCompliant)
-                                                    {
-                                                        <span class="text-success">
-                                                            <i class="bi bi-check-circle-fill"></i> Yes
-                                                        </span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="text-danger">
-                                                            <i class="bi bi-x-circle-fill"></i> No
-                                                        </span>
-                                                    }
-                                                </td>
-                                            </tr>
-                                        </table>
+                                        <h5 class="fw-bold mb-4">
+                                            <i class="bi bi-shield-lock" style="color: #27ae60;"></i> Security & Compliance
+                                        </h5>
+                                        <div class="security-check">
+                                            <i class="bi bi-lock-fill text-success"></i>
+                                            <strong>Encryption:</strong>
+                                            <span class="ms-2 badge bg-success text-white">@Model.IncomingRequest.ConnectorRequest.EncryptionType</span>
+                                        </div>
+                                        <div class="security-check">
+                                            <i class="bi bi-key-fill text-info"></i>
+                                            <strong>Auth Type:</strong>
+                                            <span class="ms-2 badge bg-info text-white">@Model.IncomingRequest.ConnectorRequest.AuthType</span>
+                                        </div>
+                                        <div class="security-check">
+                                            @if (Model.IncomingRequest.ConnectorRequest.IsFHIRCompliant)
+                                            {
+                                                <i class="bi bi-check-circle-fill text-success"></i>
+                                                <strong>FHIR Compliant:</strong>
+                                                <span class="ms-2 badge bg-success text-white">
+                                                    <i class="bi bi-check-circle-fill"></i> Yes
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                                <strong>FHIR Compliant:</strong>
+                                                <span class="ms-2 badge bg-warning text-dark">
+                                                    <i class="bi bi-x-circle-fill"></i> No
+                                                </span>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="card bg-light mb-4">
-                            <div class="card-header">
-                                <h5 class="mb-0"><i class="bi bi-unlock"></i> Decrypted Patient Data</h5>
+                        <!-- Decrypted Patient Data -->
+                        <div class="card border-0 mb-4" style="background: #f8f9fa;">
+                            <div class="card-header bg-transparent border-bottom" style="border-color: #dee2e6;">
+                                <h5 class="mb-0 fw-bold">
+                                    <i class="bi bi-unlock-fill" style="color: #f5576c;"></i> Decrypted Patient Data
+                                </h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body p-4">
                                 @if (!string.IsNullOrEmpty(Model.DecryptedData))
                                 {
-                                    <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px;">@Model.DecryptedData</pre>
+                                    <div class="patient-data-box">
+                                        @Html.Raw(System.Security.SecurityElement.Escape(Model.DecryptedData).Replace("\n", "<br/>"))
+                                    </div>
                                 }
                                 else
                                 {
-                                    <div class="alert alert-warning">Unable to decrypt patient data.</div>
+                                    <div class="alert alert-warning mb-0">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                        <strong>Warning:</strong> Unable to decrypt patient data. Please check encryption settings.
+                                    </div>
                                 }
                             </div>
                         </div>
 
                         @if (Model.IncomingRequest.IncomingStatus == "PENDING")
                         {
-                            <form method="post">
-                                <h5 class="mb-3">Your Decision</h5>
+                            <div class="decision-section">
+                                <form method="post">
+                                    <h5 class="fw-bold mb-4">
+                                        <i class="bi bi-question-circle-fill" style="color: #667eea;"></i> Your Decision
+                                    </h5>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Decision <span class="text-danger">*</span></label>
-                                    <div class="btn-group w-100" role="group">
-                                        <input type="radio" class="btn-check" name="Decision" id="acceptRadio" value="ACCEPTED" required>
-                                        <label class="btn btn-outline-success" for="acceptRadio">
-                                            <i class="bi bi-check-circle"></i> Accept Transfer
-                                        </label>
+                                    <!-- Decision Radio Buttons -->
+                                    <div class="mb-4">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <input type="radio" class="btn-check" name="Decision" id="acceptRadio" value="ACCEPTED" required>
+                                                <label class="btn btn-accept w-100 fw-bold" for="acceptRadio" style="padding: 15px;">
+                                                    <i class="bi bi-check-circle-fill"></i> Accept Transfer
+                                                </label>
+                                            </div>
 
-                                        <input type="radio" class="btn-check" name="Decision" id="rejectRadio" value="REJECTED">
-                                        <label class="btn btn-outline-danger" for="rejectRadio">
-                                            <i class="bi bi-x-circle"></i> Reject Transfer
-                                        </label>
+                                            <div class="col-md-6">
+                                                <input type="radio" class="btn-check" name="Decision" id="rejectRadio" value="REJECTED">
+                                                <label class="btn btn-reject w-100 fw-bold" for="rejectRadio" style="padding: 15px;">
+                                                    <i class="bi bi-x-circle-fill"></i> Reject Transfer
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="mb-3">
-                                    <label asp-for="Remarks" class="form-label">Remarks (Optional)</label>
-                                    <textarea asp-for="Remarks" class="form-control" rows="3"
-                                              placeholder="Enter your remarks..."></textarea>
-                                </div>
+                                    <!-- Remarks -->
+                                    <div class="mb-4">
+                                        <label asp-for="Remarks" class="form-label fw-bold">
+                                            <i class="bi bi-chat-left-text"></i> Remarks (Optional)
+                                        </label>
+                                        <textarea asp-for="Remarks" class="form-control remarks-input" rows="4"
+                                                  placeholder="Add any comments or reasons for your decision..."></textarea>
+                                    </div>
 
-                                <div class="d-flex justify-content-between">
-                                    <a asp-page="./Index" class="btn btn-secondary">
-                                        <i class="bi bi-arrow-left"></i> Back to Inbox
-                                    </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-save"></i> Submit Decision
-                                    </button>
-                                </div>
-                            </form>
+                                    <!-- Action Buttons -->
+                                    <div class="d-flex justify-content-between gap-3">
+                                        <a asp-page="./Index" class="btn btn-outline-secondary px-4 fw-bold">
+                                            <i class="bi bi-arrow-left"></i> Back to Inbox
+                                        </a>
+                                        <button type="submit" class="btn btn-primary px-4 fw-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                            <i class="bi bi-check-circle-fill"></i> Submit Decision
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         }
                         else
                         {
-                            <div class="alert alert-info">
-                                This request has already been processed.
+                            <div class="alert alert-info border-0 shadow-sm" style="background: linear-gradient(135deg, #d1f2f4 0%, #e0f7f4 100%); border-left: 4px solid #00bcd4;">
+                                <i class="bi bi-info-circle-fill"></i>
+                                <strong>Information:</strong> This request has already been processed and cannot be modified.
                             </div>
-                            <a asp-page="./Index" class="btn btn-secondary">
+                            <a asp-page="./Index" class="btn btn-outline-secondary px-4 fw-bold mt-3">
                                 <i class="bi bi-arrow-left"></i> Back to Inbox
                             </a>
                         }
@@ -160,7 +316,13 @@
             }
             else
             {
-                <div class="alert alert-danger">Request not found.</div>
+                <div class="alert alert-danger border-0 shadow-sm">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <strong>Error:</strong> The requested transfer was not found. Please return to the inbox and try again.
+                </div>
+                <a href="/" class="btn btn-secondary">
+                    <i class="bi bi-house"></i> Return Home
+                </a>
             }
         </div>
     </div>

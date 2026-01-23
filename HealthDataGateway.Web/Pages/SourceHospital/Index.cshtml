@@ -4,146 +4,279 @@
     ViewData["Title"] = "Source Hospital Dashboard";
 }
 
+<style>
+    .stat-card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .btn-transfer-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-transfer-primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+
+    .btn-transfer-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .status-badge-custom {
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .status-created {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+    }
+
+    .status-queued {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+    }
+
+    .status-sent {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        color: white;
+    }
+
+    .table-icon {
+        margin-right: 8px;
+    }
+
+    .card-section {
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .card-section:hover {
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    .patient-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .no-data-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+
+    .no-data-empty i {
+        font-size: 4rem;
+        opacity: 0.4;
+        margin-bottom: 15px;
+    }
+
+    .no-data-empty p {
+        margin: 0;
+    }
+</style>
+
 <div class="container-fluid fade-in">
+    <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body text-white p-4">
+                <div class="card-body text-white p-5">
                     <h1 class="display-5 fw-bold mb-2">
                         <i class="bi bi-hospital-fill"></i> Source Hospital Dashboard
                     </h1>
                     <p class="lead mb-0">
-                        <i class="bi bi-geo-alt-fill"></i> City General Hospital - Patient Management
+                        <i class="bi bi-geo-alt-fill"></i> City General Hospital - Manage Patient Transfers
                     </p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Success Alert -->
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show shadow">
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" style="border: none; border-left: 4px solid #27ae60;">
             <i class="bi bi-check-circle-fill fs-5"></i>
             <strong>Success!</strong> @TempData["SuccessMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
-    <div class="row g-3 mb-4">
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-5">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="card stat-card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="card-body text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-uppercase mb-2 opacity-75">Total Patients</h6>
+                            <h6 class="text-uppercase opacity-75 mb-2">
+                                <i class="bi bi-people"></i> Total Patients
+                            </h6>
                             <h2 class="display-4 fw-bold mb-0">@Model.Patients.Count</h2>
                         </div>
-                        <i class="bi bi-people-fill opacity-50" style="font-size: 4rem;"></i>
+                        <i class="bi bi-people-fill opacity-50" style="font-size: 3.5rem;"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="card stat-card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                 <div class="card-body text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-uppercase mb-2 opacity-75">Transfer Requests</h6>
+                            <h6 class="text-uppercase opacity-75 mb-2">
+                                <i class="bi bi-send"></i> Transfer Requests
+                            </h6>
                             <h2 class="display-4 fw-bold mb-0">@Model.TransferRequests.Count</h2>
                         </div>
-                        <i class="bi bi-arrow-right-circle-fill opacity-50" style="font-size: 4rem;"></i>
+                        <i class="bi bi-arrow-right-circle-fill opacity-50" style="font-size: 3.5rem;"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <div class="card stat-card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                 <div class="card-body text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-uppercase mb-2 opacity-75">Pending</h6>
+                            <h6 class="text-uppercase opacity-75 mb-2">
+                                <i class="bi bi-hourglass"></i> Pending
+                            </h6>
                             <h2 class="display-4 fw-bold mb-0">
                                 @Model.TransferRequests.FindAll(t => t.Status == "CREATED" || t.Status == "QUEUED").Count
                             </h2>
                         </div>
-                        <i class="bi bi-hourglass-split opacity-50" style="font-size: 4rem;"></i>
+                        <i class="bi bi-hourglass-split opacity-50" style="font-size: 3.5rem;"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Patient Management and Transfer Requests -->
     <div class="row g-4">
+        <!-- Patient Management Section -->
         <div class="col-lg-6">
-            <div class="card border-0 shadow-lg h-100">
-                <div class="card-header text-white py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="card card-section border-0 shadow-lg h-100">
+                <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-person-lines-fill"></i> Patient Management
+                        <i class="bi bi-person-lines-fill"></i> Patient Selection
                     </h5>
                 </div>
                 <div class="card-body p-4">
-                    <a asp-page="./CreatePatient" class="btn btn-success btn-lg w-100 mb-4 shadow">
-                        <i class="bi bi-plus-circle-fill"></i> Register New Patient
-                    </a>
-                    
-                    @if (Model.Patients.Count == 0)
-                    {
-                        <div class="text-center py-5">
-                            <i class="bi bi-inbox text-muted" style="font-size: 5rem;"></i>
-                            <p class="text-muted mt-3 fs-5">No patients registered yet</p>
+                    <form method="get" asp-page="./CreateTransfer" id="createTransferForm">
+                        <div class="d-grid gap-2 mb-4">
+                            <button id="createTransferBtn" type="submit" class="btn btn-transfer-primary btn-lg" disabled>
+                                <i class="bi bi-send-fill"></i> Create Transfer for Selected Patient
+                            </button>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Patient ID</th>
-                                        <th>Name</th>
-                                        <th>DOB</th>
-                                        <th>Gender</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var patient in Model.Patients)
-                                    {
+
+                        @if (Model.Patients.Count == 0)
+                        {
+                            <div class="no-data-empty">
+                                <i class="bi bi-inbox"></i>
+                                <p class="fs-5">No patients registered yet</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
                                         <tr>
-                                            <td><span class="badge bg-primary">@patient.LocalPatientId</span></td>
-                                            <td class="fw-semibold">@patient.FullName</td>
-                                            <td>
-                                                @if (patient.DOB.HasValue)
-                                                {
-                                                    <span>@patient.DOB.Value.ToString("MMM dd, yyyy")</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">-</span>
-                                                }
-                                            </td>
-                                            <td>@patient.Gender</td>
-                                            <td>
-                                                <a asp-page="./CreateTransfer" asp-route-patientId="@patient.PatientId" 
-                                                   class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-send-fill"></i> Transfer
-                                                </a>
-                                            </td>
+                                            <th style="width: 50px;"></th>
+                                            <th><i class="table-icon bi bi-hash"></i>Patient ID</th>
+                                            <th><i class="table-icon bi bi-person"></i>Name</th>
+                                            <th><i class="table-icon bi bi-calendar"></i>DOB</th>
+                                            <th><i class="table-icon bi bi-gender-ambiguous"></i>Gender</th>
+                                            <th><i class="table-icon bi bi-gear"></i>Actions</th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var patient in Model.Patients)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" name="patientId" value="@patient.PatientId" class="form-check-input select-patient" />
+                                                </td>
+                                                <td>
+                                                    <span class="patient-badge">@patient.LocalPatientId</span>
+                                                </td>
+                                                <td class="fw-semibold">@patient.FullName</td>
+                                                <td>
+                                                    @if (patient.DOB.HasValue)
+                                                    {
+                                                        <span>@patient.DOB.Value.ToString("MMM dd, yyyy")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (patient.Gender == "M")
+                                                    {
+                                                        <span><i class="bi bi-gender-ambiguous"></i> Male</span>
+                                                    }
+                                                    else if (patient.Gender == "F")
+                                                    {
+                                                        <span><i class="bi bi-gender-ambiguous"></i> Female</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <a asp-page="./CreateTransfer" asp-route-patientId="@patient.PatientId" 
+                                                       class="btn btn-sm btn-outline-primary fw-bold">
+                                                        <i class="bi bi-send-fill"></i> Transfer
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </form>
                 </div>
             </div>
         </div>
 
+        <!-- Transfer Requests Section -->
         <div class="col-lg-6">
-            <div class="card border-0 shadow-lg h-100">
-                <div class="card-header text-white py-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="card card-section border-0 shadow-lg h-100">
+                <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                     <h5 class="mb-0 fw-bold">
                         <i class="bi bi-arrow-right-circle-fill"></i> Transfer Requests
                     </h5>
@@ -151,9 +284,9 @@
                 <div class="card-body p-4">
                     @if (Model.TransferRequests.Count == 0)
                     {
-                        <div class="text-center py-5">
-                            <i class="bi bi-send-x text-muted" style="font-size: 5rem;"></i>
-                            <p class="text-muted mt-3 fs-5">No transfer requests yet</p>
+                        <div class="no-data-empty">
+                            <i class="bi bi-send-x"></i>
+                            <p class="fs-5">No transfer requests yet</p>
                         </div>
                     }
                     else
@@ -162,11 +295,11 @@
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Patient</th>
-                                        <th>Target</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
+                                        <th><i class="table-icon bi bi-hash"></i>ID</th>
+                                        <th><i class="table-icon bi bi-person"></i>Patient</th>
+                                        <th><i class="table-icon bi bi-building"></i>Target</th>
+                                        <th><i class="table-icon bi bi-activity"></i>Status</th>
+                                        <th><i class="table-icon bi bi-calendar"></i>Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -174,27 +307,39 @@
                                     {
                                         <tr>
                                             <td><strong>#@request.TransferRequestId</strong></td>
-                                            <td>@request.Patient.FullName</td>
-                                            <td><small>@request.TargetHospital.HospitalName</small></td>
+                                            <td class="fw-semibold">@request.Patient.FullName</td>
+                                            <td>
+                                                <span class="badge bg-info text-dark">
+                                                    @request.TargetHospital.HospitalName
+                                                </span>
+                                            </td>
                                             <td>
                                                 @if (request.Status == "SENT")
                                                 {
-                                                    <span class="badge bg-success">SENT</span>
+                                                    <span class="status-badge-custom status-sent">
+                                                        <i class="bi bi-check-circle-fill"></i> SENT
+                                                    </span>
                                                 }
                                                 else if (request.Status == "QUEUED")
                                                 {
-                                                    <span class="badge bg-warning">QUEUED</span>
+                                                    <span class="status-badge-custom status-queued">
+                                                        <i class="bi bi-hourglass-split"></i> QUEUED
+                                                    </span>
                                                 }
                                                 else if (request.Status == "CREATED")
                                                 {
-                                                    <span class="badge bg-info">CREATED</span>
+                                                    <span class="status-badge-custom status-created">
+                                                        <i class="bi bi-arrow-right"></i> CREATED
+                                                    </span>
                                                 }
                                                 else
                                                 {
                                                     <span class="badge bg-secondary">@request.Status</span>
                                                 }
                                             </td>
-                                            <td><small>@request.CreatedAt.ToString("MMM dd, HH:mm")</small></td>
+                                            <td>
+                                                <small class="text-muted">@request.CreatedAt.ToString("MMM dd, HH:mm")</small>
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>
@@ -206,4 +351,23 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function() {
+            const radios = document.querySelectorAll('.select-patient');
+            const btn = document.getElementById('createTransferBtn');
+
+            function updateButton() {
+                const anyChecked = Array.from(radios).some(r => r.checked);
+                btn.disabled = !anyChecked;
+            }
+
+            radios.forEach(r => r.addEventListener('change', updateButton));
+
+            // initialize
+            updateButton();
+        })();
+    </script>
+}
 

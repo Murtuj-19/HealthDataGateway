@@ -1,6 +1,7 @@
 ﻿using HealthDataGateway.Data;
 using HealthDataGateway.Data.Models;
 using HealthDataGateway.Services.Interfaces;
+using HealthDataGateway.Services.Constants;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,11 +49,11 @@ namespace HealthDataGateway.Services.Implementation
                 .Include(c => c.TransferRequest)
                 .FirstOrDefaultAsync(c => c.ConnectorRequestId == connectorRequestId);
 
-            if (connectorRequest == null || connectorRequest.Status != "PROCESSING")
+            if (connectorRequest == null || connectorRequest.Status != Statuses.Connector.Processing)
                 return false;
 
             // Simulate validation and processing
-            connectorRequest.Status = "DELIVERED";
+            connectorRequest.Status = Statuses.Connector.Delivered;
             await _context.SaveChangesAsync();
 
             // Log activity
@@ -92,17 +93,17 @@ namespace HealthDataGateway.Services.Implementation
                 ConnectorRequestId = connectorRequestId,
                 SourceHospitalId = connectorRequest.TransferRequest!.SourceHospitalId,
                 TargetHospitalId = targetHospitalId,
-                IncomingStatus = "PENDING",
+                IncomingStatus = Statuses.Incoming.Pending,
                 ReceivedAt = System.DateTime.Now
             };
 
             _context.IncomingTransferRequests.Add(incomingRequest);
 
             // Update connector request status
-            connectorRequest.Status = "DELIVERED";
+            connectorRequest.Status = Statuses.Connector.Delivered;
 
             // Update transfer request status
-            connectorRequest.TransferRequest.Status = "SENT";
+            connectorRequest.TransferRequest.Status = Statuses.Transfer.Sent;
 
             await _context.SaveChangesAsync();
 

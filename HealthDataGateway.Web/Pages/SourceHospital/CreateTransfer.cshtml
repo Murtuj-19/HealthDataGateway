@@ -4,102 +4,308 @@
     ViewData["Title"] = "Create Transfer Request";
 }
 
-<div class="container mt-4 fade-in">
+<style>
+    .transfer-header {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 40px 30px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+    }
+
+    .patient-info-card {
+        background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+        border: 2px solid #4facfe;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 25px;
+    }
+
+    .patient-info-card h5 {
+        color: #0062cc;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .info-value {
+        color: #555;
+    }
+
+    .diagnoses-card {
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+        border: 2px solid #ffc107;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 25px;
+    }
+
+    .diagnoses-card h6 {
+        color: #ff9800;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .diagnosis-item {
+        background: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border-left: 4px solid #ffc107;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .diagnosis-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .diagnosis-text {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .diagnosis-date {
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    .security-alert {
+        background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%);
+        border: 2px solid #27ae60;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .security-alert i {
+        font-size: 1.8rem;
+        color: #27ae60;
+    }
+
+    .security-alert strong {
+        color: #27ae60;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .hospital-select {
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+        padding: 12px 15px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .hospital-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 12px;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 14px 40px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+
+    .btn-back {
+        border: 2px solid #9ca3af;
+        color: #555;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background: #f3f4f6;
+        border-color: #555;
+        color: #555;
+    }
+
+    .no-data-alert {
+        background: #f8f9fa;
+        border: 2px dashed #dee2e6;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        color: #999;
+    }
+
+    .no-data-alert i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+        opacity: 0.5;
+    }
+</style>
+
+<div class="container-lg fade-in" style="padding-top: 20px;">
     <div class="row justify-content-center">
-        <div class="col-lg-9">
-            <div class="card border-0 shadow-lg mb-4">
-                <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                    <h3 class="mb-0 fw-bold">
-                        <i class="bi bi-send-fill"></i> Create Transfer Request
+        <div class="col-lg-8">
+            @if (Model.Patient != null)
+            {
+                <div class="transfer-header">
+                    <h3 class="mb-1 fw-bold">
+                        <i class="bi bi-send-fill"></i> Create Patient Transfer Request
                     </h3>
+                    <p class="mb-0 opacity-90">
+                        <i class="bi bi-info-circle"></i> Send encrypted patient data to target hospital for review
+                    </p>
                 </div>
 
-                <div class="card-body p-5">
-                    @if (Model.Patient != null)
-                    {
-                        <div class="card bg-primary bg-opacity-10 border-primary border-2 mb-4">
-                            <div class="card-body">
-                                <h5 class="fw-bold mb-3">Patient Information</h5>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><strong>Name:</strong> @Model.Patient.FullName</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>Patient ID:</strong> @Model.Patient.LocalPatientId</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p>
-                                            <strong>DOB:</strong>
-                                            @if (Model.Patient.DOB.HasValue)
-                                            {
-                                                @Model.Patient.DOB.Value.ToString("MMM dd, yyyy")
-                                            }
-                                            else
-                                            {
-                                                <span>Not specified</span>
-                                            }
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>Gender:</strong> @Model.Patient.Gender</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Patient Information Section -->
+                <div class="patient-info-card">
+                    <h5>
+                        <i class="bi bi-person-vcard"></i> Patient Information
+                    </h5>
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-person"></i> Name:</span>
+                        <span class="info-value fw-bold">@Model.Patient.FullName</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-hash"></i> Patient ID:</span>
+                        <span class="info-value">
+                            <span class="badge bg-primary">@Model.Patient.LocalPatientId</span>
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-calendar"></i> Date of Birth:</span>
+                        <span class="info-value">
+                            @if (Model.Patient.DOB.HasValue)
+                            {
+                                <text>@Model.Patient.DOB.Value.ToString("MMM dd, yyyy") (age: @(DateTime.Now.Year - Model.Patient.DOB.Value.Year))</text>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-gender-ambiguous"></i> Gender:</span>
+                        <span class="info-value">
+                            @if (Model.Patient.Gender == "M")
+                            {
+                                <span>Male</span>
+                            }
+                            else if (Model.Patient.Gender == "F")
+                            {
+                                <span>Female</span>
+                            }
+                            else if (Model.Patient.Gender == "O")
+                            {
+                                <span>Other</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not specified</span>
+                            }
+                        </span>
+                    </div>
+                </div>
 
-                        @if (Model.Patient.Diagnoses != null && Model.Patient.Diagnoses.Any())
+                <!-- Medical Diagnoses Section -->
+                @if (Model.Patient.Diagnoses != null && Model.Patient.Diagnoses.Any())
+                {
+                    <div class="diagnoses-card">
+                        <h6>
+                            <i class="bi bi-activity"></i> Medical Diagnoses
+                        </h6>
+                        @foreach (var diagnosis in Model.Patient.Diagnoses)
                         {
-                            <div class="card bg-warning bg-opacity-10 border-warning border-2 mb-4">
-                                <div class="card-body">
-                                    <h6 class="fw-bold mb-3">Medical Diagnoses</h6>
-                                    <ul>
-                                        @foreach (var diagnosis in Model.Patient.Diagnoses)
-                                        {
-                                            <li>
-                                                @diagnosis.DiagnosisText
-                                                <small class="text-muted">(@diagnosis.DiagnosedAt.ToString("MMM dd, yyyy"))</small>
-                                            </li>
-                                        }
-                                    </ul>
+                            <div class="diagnosis-item">
+                                <div>
+                                    <div class="diagnosis-text">@diagnosis.DiagnosisText</div>
+                                    <small class="diagnosis-date">
+                                        <i class="bi bi-calendar-event"></i> @diagnosis.DiagnosedAt.ToString("MMM dd, yyyy")
+                                    </small>
                                 </div>
                             </div>
                         }
+                    </div>
+                }
 
-                        <form method="post">
-                            <input type="hidden" asp-for="PatientId" />
-
-                            <div class="mb-4">
-                                <label asp-for="TargetHospitalId" class="form-label fw-semibold fs-5">
-                                    Select Target Hospital <span class="text-danger">*</span>
-                                </label>
-                                <select asp-for="TargetHospitalId" asp-items="Model.Hospitals"
-                                        class="form-select form-select-lg" required>
-                                    <option value="">-- Select Destination Hospital --</option>
-                                </select>
-                                <span asp-validation-for="TargetHospitalId" class="text-danger"></span>
-                            </div>
-
-                            <div class="alert alert-success border-2 shadow-sm">
-                                <i class="bi bi-shield-lock-fill fs-3"></i>
-                                <strong>Secure Transfer:</strong> Data will be encrypted using AES-256 encryption.
-                            </div>
-
-                            <div class="d-grid gap-3 d-md-flex justify-content-md-between mt-5">
-                                <a asp-page="./Index" class="btn btn-outline-secondary btn-lg">
-                                    <i class="bi bi-arrow-left"></i> Back
-                                </a>
-                                <button type="submit" class="btn btn-primary btn-lg shadow-lg">
-                                    <i class="bi bi-send-fill"></i> Create & Send Request
-                                </button>
-                            </div>
-                        </form>
-                    }
-                    else
-                    {
-                        <div class="alert alert-danger">Patient not found.</div>
-                    }
+                <!-- Security Alert -->
+                <div class="security-alert">
+                    <i class="bi bi-shield-lock"></i>
+                    <div>
+                        <strong>Secure Transfer:</strong>
+                        <small>Patient data will be encrypted using AES-256 before transmission. Full HIPAA compliance.</small>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Transfer Form -->
+                <form method="post">
+                    <input type="hidden" asp-for="PatientId" />
+
+                    <div class="mb-4">
+                        <label asp-for="TargetHospitalId" class="form-label">
+                            <i class="bi bi-building"></i> Select Target Hospital <span class="text-danger">*</span>
+                        </label>
+                        <select asp-for="TargetHospitalId" asp-items="Model.Hospitals"
+                                class="form-select form-select-lg hospital-select" required>
+                            <option value="">-- Select Destination Healthcare Facility --</option>
+                        </select>
+                        <span asp-validation-for="TargetHospitalId" class="text-danger small mt-2 d-block"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-3 d-md-flex justify-content-md-between mt-5">
+                        <a asp-page="./Index" class="btn btn-back btn-lg">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </a>
+                        <button type="submit" class="btn btn-submit btn-lg">
+                            <i class="bi bi-send-fill"></i> Create & Send Request
+                        </button>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <div class="no-data-alert">
+                    <i class="bi bi-inbox"></i>
+                    <p class="mb-0 fs-5">Patient not found</p>
+                    <a asp-page="./Index" class="btn btn-primary mt-4">
+                        <i class="bi bi-arrow-left"></i> Back to Patients
+                    </a>
+                </div>
+            }
         </div>
     </div>
 </div>

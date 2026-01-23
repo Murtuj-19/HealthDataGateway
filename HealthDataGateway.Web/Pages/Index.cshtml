@@ -1,39 +1,266 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Health Data Gateway - Home";
 }
 
-<div class="container mt-4">
-    <h1 class="mb-4">Health Data Gateway</h1>
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 20px;
+        text-align: center;
+        margin-bottom: 60px;
+        border-radius: 10px;
+    }
 
-    <div class="row g-4">
-        <div class="col-md-4">
-            <a class="card text-decoration-none text-dark h-100" asp-page="/Connector/Index">
-                <div class="card-body">
-                    <h4 class="card-title">Connector</h4>
-                    <p class="card-text">Open connector dashboard to process and deliver transfer requests.</p>
+    .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero-section p {
+        font-size: 1.25rem;
+        opacity: 0.95;
+        margin: 0;
+    }
+
+    .module-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .module-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .module-card-header {
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+    }
+
+    .module-card-body {
+        padding: 30px;
+    }
+
+    .module-card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #2c3e50;
+    }
+
+    .module-card-text {
+        color: #7f8c8d;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .module-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .connector-card .module-card-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+    }
+
+    .connector-badge {
+        background-color: #ecf0f1;
+        color: #2c3e50;
+    }
+
+    .source-card .module-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .source-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .target-card .module-card-header {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+    }
+
+    .target-badge {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+    }
+
+    .info-section {
+        background: #f8f9fa;
+        padding: 40px 30px;
+        border-radius: 12px;
+        margin-top: 60px;
+    }
+
+    .info-section h2 {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .feature-list li {
+        padding: 12px 0;
+        border-bottom: 1px solid #e0e0e0;
+        color: #555;
+        display: flex;
+        align-items: center;
+    }
+
+    .feature-list li:last-child {
+        border-bottom: none;
+    }
+
+    .feature-list li:before {
+        content: "✓";
+        color: #27ae60;
+        font-weight: bold;
+        margin-right: 12px;
+        font-size: 1.2rem;
+    }
+
+    .security-badge {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .security-badge i {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        display: block;
+    }
+</style>
+
+<div class="container-lg fade-in">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1>
+            <i class="bi bi-hospital"></i> Health Data Gateway
+        </h1>
+        <p>Secure, Encrypted Patient Data Transfer Between Healthcare Institutions</p>
+    </div>
+
+    <!-- Module Cards -->
+    <div class="row g-4 mb-5">
+        <!-- Connector Card -->
+        <div class="col-lg-4">
+            <a asp-page="/Connector/Index" class="module-card connector-card text-decoration-none">
+                <div class="module-card-header">
+                    <i class="bi bi-arrow-left-right"></i>
+                </div>
+                <div class="module-card-body">
+                    <h3 class="module-card-title">
+                        <i class="bi bi-diagram-3"></i> Connector Gateway
+                    </h3>
+                    <p class="module-card-text">
+                        Process and validate encrypted patient data transfers. Route requests securely to target healthcare institutions.
+                    </p>
+                    <span class="module-badge connector-badge">
+                        <i class="bi bi-lock-fill"></i> Encrypted
+                    </span>
                 </div>
             </a>
         </div>
 
-        <div class="col-md-4">
-            <a class="card text-decoration-none text-dark h-100" asp-page="/SourceHospital/Index">
-                <div class="card-body">
-                    <h4 class="card-title">Source Hospitals</h4>
-                    <p class="card-text">Manage patients and create transfer requests.</p>
+        <!-- Source Hospital Card -->
+        <div class="col-lg-4">
+            <a asp-page="/SourceHospital/Index" class="module-card source-card text-decoration-none">
+                <div class="module-card-header">
+                    <i class="bi bi-hospital"></i>
+                </div>
+                <div class="module-card-body">
+                    <h3 class="module-card-title">
+                        <i class="bi bi-send-fill"></i> Source Hospital
+                    </h3>
+                    <p class="module-card-text">
+                        Manage your patient records and initiate secure transfer requests to other healthcare facilities with HIPAA compliance.
+                    </p>
+                    <span class="module-badge source-badge">
+                        <i class="bi bi-shield-check"></i> HIPAA Ready
+                    </span>
                 </div>
             </a>
         </div>
 
-        <div class="col-md-4">
-            <a class="card text-decoration-none text-dark h-100" asp-page="/TargetHospital/Index">
-                <div class="card-body">
-                    <h4 class="card-title">Target Hospitals</h4>
-                    <p class="card-text">View incoming requests and respond.</p>
+        <!-- Target Hospital Card -->
+        <div class="col-lg-4">
+            <a asp-page="/TargetHospital/Index" class="module-card target-card text-decoration-none">
+                <div class="module-card-header">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <div class="module-card-body">
+                    <h3 class="module-card-title">
+                        <i class="bi bi-file-earmark-medical"></i> Target Hospital
+                    </h3>
+                    <p class="module-card-text">
+                        Review incoming patient transfer requests, securely decrypt data, and accept or reject transfers with detailed remarks.
+                    </p>
+                    <span class="module-badge target-badge">
+                        <i class="bi bi-check-circle"></i> Review & Approve
+                    </span>
                 </div>
             </a>
         </div>
     </div>
 
+    <!-- Info Section -->
+    <div class="info-section">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2><i class="bi bi-info-circle-fill" style="color: #667eea;"></i> Platform Features</h2>
+                <ul class="feature-list">
+                    <li>End-to-End AES-256 Encryption</li>
+                    <li>FHIR Compliant Data Format</li>
+                    <li>OAuth2 Authentication</li>
+                    <li>Real-time Status Tracking</li>
+                    <li>Comprehensive Audit Logging</li>
+                    <li>Multi-Hospital Support</li>
+                    <li>Secure Acknowledgements</li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <h2><i class="bi bi-shield-check" style="color: #f5576c;"></i> Security & Compliance</h2>
+                <p style="color: #555; line-height: 1.8;">
+                    Our Health Data Gateway is built with healthcare data security as the top priority. All patient information is encrypted using industry-standard AES-256 encryption before transmission. The platform maintains complete audit trails of all activities and supports HIPAA compliance requirements.
+                </p>
+                <div class="security-badge">
+                    <i class="bi bi-lock-fill"></i>
+                    <div><strong>Enterprise-Grade Security</strong></div>
+                    <small style="opacity: 0.9;">HIPAA Compliant • FHIR Standard • Encrypted Transfers</small>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">

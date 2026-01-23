@@ -3,6 +3,148 @@
 @{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<style>
+    .privacy-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 30px;
+        border-radius: 12px;
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+    .privacy-content {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .section {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border-left: 4px solid #667eea;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .section:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h3 {
+        color: #667eea;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section p {
+        color: #555;
+        line-height: 1.8;
+        margin-bottom: 10px;
+    }
+
+    .section ul {
+        color: #555;
+        line-height: 1.8;
+    }
+
+    .section li {
+        margin-bottom: 8px;
+    }
+</style>
+
+<div class="container-lg fade-in" style="padding-top: 20px;">
+    <div class="privacy-header">
+        <h1 class="display-4 fw-bold mb-2">
+            <i class="bi bi-shield-lock"></i> Privacy Policy
+        </h1>
+        <p class="lead mb-0">Protecting Your Healthcare Data</p>
+    </div>
+
+    <div class="privacy-content">
+        <div class="section">
+            <h3>
+                <i class="bi bi-info-circle-fill" style="color: #667eea;"></i> Overview
+            </h3>
+            <p>
+                The Health Data Gateway is committed to protecting your privacy and ensuring you have a positive experience on our platform. 
+                This Privacy Policy outlines how we collect, use, and safeguard your healthcare information.
+            </p>
+        </div>
+
+        <div class="section">
+            <h3>
+                <i class="bi bi-lock-fill" style="color: #27ae60;"></i> Data Protection
+            </h3>
+            <p>
+                All patient data transmitted through our platform is protected using industry-standard AES-256 encryption. We maintain strict 
+                compliance with HIPAA regulations and other healthcare privacy standards.
+            </p>
+            <ul>
+                <li><strong>Encryption:</strong> AES-256 for data in transit and at rest</li>
+                <li><strong>Authentication:</strong> OAuth2 authentication with multi-factor support</li>
+                <li><strong>Access Control:</strong> Role-based access control (RBAC) implementation</li>
+                <li><strong>Audit Logging:</strong> Comprehensive activity logging for all transactions</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>
+                <i class="bi bi-person-vcard-fill" style="color: #4facfe;"></i> Information We Collect
+            </h3>
+            <p>We collect the following categories of information:</p>
+            <ul>
+                <li>Patient demographic information</li>
+                <li>Medical diagnoses and treatment history</li>
+                <li>Healthcare facility information</li>
+                <li>User activity and access logs</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>
+                <i class="bi bi-share-fill" style="color: #f5576c;"></i> Data Sharing
+            </h3>
+            <p>
+                Patient data is only shared between healthcare facilities as authorized by the patient and through our secure encrypted 
+                transfer process. We do not sell or share data with third parties for marketing purposes.
+            </p>
+        </div>
+
+        <div class="section">
+            <h3>
+                <i class="bi bi-calendar-event-fill" style="color: #ffc107;"></i> Data Retention
+            </h3>
+            <p>
+                Patient data is retained for the duration of treatment and as required by applicable healthcare regulations. 
+                Data is securely deleted when no longer needed in accordance with legal requirements.
+            </p>
+        </div>
+
+        <div class="section">
+            <h3>
+                <i class="bi bi-envelope-open-fill" style="color: #00f2fe;"></i> Contact Us
+            </h3>
+            <p>
+                If you have any questions about our privacy practices or wish to exercise your data rights, please contact our 
+                Privacy Officer at <strong>privacy@healthdatagateway.com</strong>
+            </p>
+        </div>
+
+        <div class="section" style="border-left-color: #27ae60; background: linear-gradient(135deg, rgba(39, 174, 96, 0.05) 0%, rgba(46, 204, 113, 0.05) 100%);">
+            <h3>
+                <i class="bi bi-check-circle-fill" style="color: #27ae60;"></i> HIPAA Compliance
+            </h3>
+            <p>
+                This platform is designed and operated in compliance with the Health Insurance Portability and Accountability Act (HIPAA) 
+                and related healthcare privacy regulations. All healthcare facilities using this platform must maintain appropriate safeguards 
+                and access controls.
+            </p>
+        </div>
+    </div>
+</div>

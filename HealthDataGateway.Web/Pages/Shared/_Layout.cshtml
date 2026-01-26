@@ -1,5 +1,8 @@
 ﻿@using System.Linq
 @inject HealthDataGateway.Data.ApplicationDbContext DbContext
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using System.Security.Claims
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -224,73 +227,46 @@
                                 <i class="bi bi-house"></i> Home
                             </a>
                         </li>
-
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="modulesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-diagram-3"></i> Modules
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="modulesDropdown">
-                                    @if (User.IsInRole("SourceHospital"))
-                                    {
-                                        <li>
-                                            <a class="dropdown-item" asp-area="" asp-page="/SourceHospital/Index">
-                                                <i class="bi bi-send-fill"></i> Source Hospital
-                                            </a>
-                                        </li>
-                                    }
-                                    @if (User.IsInRole("TargetHospital"))
-                                    {
-                                        <li>
-                                            <a class="dropdown-item" asp-area="" asp-page="/TargetHospital/Index">
-                                                <i class="bi bi-inbox-fill"></i> Target Hospital
-                                            </a>
-                                        </li>
-                                    }
-                                    @if (User.IsInRole("Connector"))
-                                    {
-                                        <li>
-                                            <a class="dropdown-item" asp-area="" asp-page="/Connector/Index">
-                                                <i class="bi bi-diagram-2"></i> Connector Gateway
-                                            </a>
-                                        </li>
-                                    }
-                                </ul>
-                            </li>
-                        }
-
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="modulesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-diagram-3"></i> Modules
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="modulesDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-page="/SourceHospital/Index">
+                                        <i class="bi bi-send-fill"></i> Source Hospital
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-page="/TargetHospital/Index">
+                                        <i class="bi bi-inbox-fill"></i> Target Hospital
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-page="/Connector/Index">
+                                        <i class="bi bi-diagram-2"></i> Connector Gateway
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-page="/Privacy">
                                 <i class="bi bi-shield-lock"></i> Privacy
                             </a>
                         </li>
-                    </ul>
 
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        <div class="d-flex align-items-center">
-                            <div class="user-info">
-                                <i class="bi bi-person-circle" style="font-size: 1.2rem; color: #667eea;"></i>
-                                <span class="username">@User.Identity.Name</span>
-                                @if (User.IsInRole("Connector"))
-                                {
-                                    <span class="role-badge role-connector">Connector</span>
-                                }
-                                else if (User.IsInRole("SourceHospital"))
-                                {
-                                    <span class="role-badge role-source">Source Hospital</span>
-                                }
-                                else if (User.IsInRole("TargetHospital"))
-                                {
-                                    <span class="role-badge role-target">Target Hospital</span>
-                                }
-                            </div>
-                            <a asp-page="/Logout" class="btn-logout">
-                                <i class="bi bi-box-arrow-right"></i> Logout
-                            </a>
-                        </div>
-                    }
+                        @if (User?.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle"></i> @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" asp-page="/Account/Logout">Logout</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>

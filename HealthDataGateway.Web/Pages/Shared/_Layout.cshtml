@@ -42,9 +42,9 @@
             letter-spacing: -0.5px;
         }
 
-        .navbar-brand i {
-            margin-right: 8px;
-        }
+            .navbar-brand i {
+                margin-right: 8px;
+            }
 
         .nav-link {
             font-weight: 500;
@@ -53,24 +53,80 @@
             position: relative;
         }
 
-        .nav-link:hover {
-            color: #667eea !important;
+            .nav-link:hover {
+                color: #667eea !important;
+            }
+
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                bottom: -5px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                transition: width 0.3s ease;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 15px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 25px;
+            margin-right: 10px;
         }
 
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
+            .user-info .username {
+                font-weight: 600;
+                color: #2c3e50;
+                margin: 0;
+            }
+
+        .role-badge {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .role-connector {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .role-source {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s ease;
+            color: white;
         }
 
-        .nav-link:hover::after {
-            width: 100%;
+        .role-target {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
         }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+            .btn-logout:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+                color: white;
+            }
 
         footer {
             background: #2c3e50;
@@ -79,15 +135,15 @@
             margin-top: 80px;
         }
 
-        footer a {
-            color: #ecf0f1;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
+            footer a {
+                color: #ecf0f1;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
 
-        footer a:hover {
-            color: #667eea;
-        }
+                footer a:hover {
+                    color: #667eea;
+                }
 
         .alert {
             border: none;
@@ -114,6 +170,7 @@
                 transform: translateY(-20px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -128,6 +185,7 @@
             from {
                 opacity: 0;
             }
+
             to {
                 opacity: 1;
             }
@@ -140,6 +198,11 @@
 
             main {
                 padding: 10px;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 5px;
             }
         }
     </style>
@@ -161,34 +224,73 @@
                                 <i class="bi bi-house"></i> Home
                             </a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="modulesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-diagram-3"></i> Modules
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="modulesDropdown">
-                                <li>
-                                    <a class="dropdown-item" asp-area="" asp-page="/SourceHospital/Index">
-                                        <i class="bi bi-send-fill"></i> Source Hospital
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-area="" asp-page="/TargetHospital/Index">
-                                        <i class="bi bi-inbox-fill"></i> Target Hospital
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-area="" asp-page="/Connector/Index">
-                                        <i class="bi bi-diagram-2"></i> Connector Gateway
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="modulesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-diagram-3"></i> Modules
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="modulesDropdown">
+                                    @if (User.IsInRole("SourceHospital"))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-page="/SourceHospital/Index">
+                                                <i class="bi bi-send-fill"></i> Source Hospital
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (User.IsInRole("TargetHospital"))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-page="/TargetHospital/Index">
+                                                <i class="bi bi-inbox-fill"></i> Target Hospital
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (User.IsInRole("Connector"))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-page="/Connector/Index">
+                                                <i class="bi bi-diagram-2"></i> Connector Gateway
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-page="/Privacy">
                                 <i class="bi bi-shield-lock"></i> Privacy
                             </a>
                         </li>
                     </ul>
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="d-flex align-items-center">
+                            <div class="user-info">
+                                <i class="bi bi-person-circle" style="font-size: 1.2rem; color: #667eea;"></i>
+                                <span class="username">@User.Identity.Name</span>
+                                @if (User.IsInRole("Connector"))
+                                {
+                                    <span class="role-badge role-connector">Connector</span>
+                                }
+                                else if (User.IsInRole("SourceHospital"))
+                                {
+                                    <span class="role-badge role-source">Source Hospital</span>
+                                }
+                                else if (User.IsInRole("TargetHospital"))
+                                {
+                                    <span class="role-badge role-target">Target Hospital</span>
+                                }
+                            </div>
+                            <a asp-page="/Logout" class="btn-logout">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
         </nav>
@@ -233,8 +335,8 @@
                         &copy; 2026 Health Data Gateway. All rights reserved.
                     </p>
                     <p class="small">
-                        <a asp-area="" asp-page="/Privacy">Privacy Policy</a> | 
-                        <a href="#">Terms of Service</a> | 
+                        <a asp-area="" asp-page="/Privacy">Privacy Policy</a> |
+                        <a href="#">Terms of Service</a> |
                         <a href="#">Contact Us</a>
                     </p>
                 </div>

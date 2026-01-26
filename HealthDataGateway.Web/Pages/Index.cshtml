@@ -14,18 +14,18 @@
         border-radius: 10px;
     }
 
-    .hero-section h1 {
-        font-size: 3.5rem;
-        font-weight: 700;
-        margin-bottom: 20px;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
 
-    .hero-section p {
-        font-size: 1.25rem;
-        opacity: 0.95;
-        margin: 0;
-    }
+        .hero-section p {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            margin: 0;
+        }
 
     .module-card {
         background: white;
@@ -37,12 +37,13 @@
         color: inherit;
         overflow: hidden;
         height: 100%;
+        cursor: pointer;
     }
 
-    .module-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-    }
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
 
     .module-card-header {
         height: 120px;
@@ -114,36 +115,36 @@
         margin-top: 60px;
     }
 
-    .info-section h2 {
-        color: #2c3e50;
-        margin-bottom: 25px;
-        font-weight: 600;
-    }
+        .info-section h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
 
     .feature-list {
         list-style: none;
         padding: 0;
     }
 
-    .feature-list li {
-        padding: 12px 0;
-        border-bottom: 1px solid #e0e0e0;
-        color: #555;
-        display: flex;
-        align-items: center;
-    }
+        .feature-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
 
-    .feature-list li:last-child {
-        border-bottom: none;
-    }
+            .feature-list li:last-child {
+                border-bottom: none;
+            }
 
-    .feature-list li:before {
-        content: "✓";
-        color: #27ae60;
-        font-weight: bold;
-        margin-right: 12px;
-        font-size: 1.2rem;
-    }
+            .feature-list li:before {
+                content: "✓";
+                color: #27ae60;
+                font-weight: bold;
+                margin-right: 12px;
+                font-size: 1.2rem;
+            }
 
     .security-badge {
         background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -154,11 +155,30 @@
         margin-top: 20px;
     }
 
-    .security-badge i {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-        display: block;
+        .security-badge i {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+    .login-btn {
+        display: inline-block;
+        padding: 10px 25px;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid white;
+        color: white;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-top: 10px;
     }
+
+        .login-btn:hover {
+            background: white;
+            color: #2c3e50;
+            transform: scale(1.05);
+        }
 </style>
 
 <div class="container-lg fade-in">
@@ -174,7 +194,7 @@
     <div class="row g-4 mb-5">
         <!-- Connector Card -->
         <div class="col-lg-4">
-            <a asp-page="/Connector/Index" class="module-card connector-card text-decoration-none">
+            <a asp-page="/Connector/Login" class="module-card connector-card text-decoration-none">
                 <div class="module-card-header">
                     <i class="bi bi-arrow-left-right"></i>
                 </div>
@@ -188,13 +208,18 @@
                     <span class="module-badge connector-badge">
                         <i class="bi bi-lock-fill"></i> Encrypted
                     </span>
+                    <div class="text-center mt-3">
+                        <span class="login-btn">
+                            <i class="bi bi-box-arrow-in-right"></i> Login to Connector
+                        </span>
+                    </div>
                 </div>
             </a>
         </div>
 
         <!-- Source Hospital Card -->
         <div class="col-lg-4">
-            <a asp-page="/SourceHospital/Index" class="module-card source-card text-decoration-none">
+            <a asp-page="/SourceHospital/Login" class="module-card source-card text-decoration-none">
                 <div class="module-card-header">
                     <i class="bi bi-hospital"></i>
                 </div>
@@ -208,13 +233,18 @@
                     <span class="module-badge source-badge">
                         <i class="bi bi-shield-check"></i> HIPAA Ready
                     </span>
+                    <div class="text-center mt-3">
+                        <span class="login-btn">
+                            <i class="bi bi-box-arrow-in-right"></i> Login to Source Hospital
+                        </span>
+                    </div>
                 </div>
             </a>
         </div>
 
         <!-- Target Hospital Card -->
         <div class="col-lg-4">
-            <a asp-page="/TargetHospital/Index" class="module-card target-card text-decoration-none">
+            <a asp-page="/TargetHospital/Login" class="module-card target-card text-decoration-none">
                 <div class="module-card-header">
                     <i class="bi bi-inbox"></i>
                 </div>
@@ -228,6 +258,11 @@
                     <span class="module-badge target-badge">
                         <i class="bi bi-check-circle"></i> Review & Approve
                     </span>
+                    <div class="text-center mt-3">
+                        <span class="login-btn">
+                            <i class="bi bi-box-arrow-in-right"></i> Login to Target Hospital
+                        </span>
+                    </div>
                 </div>
             </a>
         </div>

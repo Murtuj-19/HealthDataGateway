@@ -1,11 +1,13 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using HealthDataGateway.Services.Interfaces;
 using HealthDataGateway.Data.Models;
+using HealthDataGateway.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HealthDataGateway.Web.Pages.TargetHospital
 {
+   
     public class IndexModel : PageModel
     {
         private readonly ITargetHospitalService _targetHospitalService;

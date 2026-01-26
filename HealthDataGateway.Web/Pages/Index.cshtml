@@ -194,7 +194,7 @@
     <div class="row g-4 mb-5">
         <!-- Connector Card -->
         <div class="col-lg-4">
-            <a asp-page="/Connector/Login" class="module-card connector-card text-decoration-none">
+            <div class="module-card connector-card text-decoration-none" role="button" data-role="CONNECTOR" id="card-connector">
                 <div class="module-card-header">
                     <i class="bi bi-arrow-left-right"></i>
                 </div>
@@ -209,17 +209,17 @@
                         <i class="bi bi-lock-fill"></i> Encrypted
                     </span>
                     <div class="text-center mt-3">
-                        <span class="login-btn">
+                        <span class="login-btn" data-role="CONNECTOR">
                             <i class="bi bi-box-arrow-in-right"></i> Login to Connector
                         </span>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
 
         <!-- Source Hospital Card -->
         <div class="col-lg-4">
-            <a asp-page="/SourceHospital/Login" class="module-card source-card text-decoration-none">
+            <div class="module-card source-card text-decoration-none" role="button" data-role="SOURCE" id="card-source">
                 <div class="module-card-header">
                     <i class="bi bi-hospital"></i>
                 </div>
@@ -234,17 +234,17 @@
                         <i class="bi bi-shield-check"></i> HIPAA Ready
                     </span>
                     <div class="text-center mt-3">
-                        <span class="login-btn">
+                        <span class="login-btn" data-role="SOURCE">
                             <i class="bi bi-box-arrow-in-right"></i> Login to Source Hospital
                         </span>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
 
         <!-- Target Hospital Card -->
         <div class="col-lg-4">
-            <a asp-page="/TargetHospital/Login" class="module-card target-card text-decoration-none">
+            <div class="module-card target-card text-decoration-none" role="button" data-role="TARGET" id="card-target">
                 <div class="module-card-header">
                     <i class="bi bi-inbox"></i>
                 </div>
@@ -259,12 +259,12 @@
                         <i class="bi bi-check-circle"></i> Review & Approve
                     </span>
                     <div class="text-center mt-3">
-                        <span class="login-btn">
+                        <span class="login-btn" data-role="TARGET">
                             <i class="bi bi-box-arrow-in-right"></i> Login to Target Hospital
                         </span>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
     </div>
 
@@ -298,4 +298,103 @@
     </div>
 </div>
 
+<!-- Login Modal -->
+<div class="modal fade" id="roleLoginModal" tabindex="-1" aria-labelledby="roleLoginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="roleLoginModalLabel">Sign in</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page="/Account/Login" id="roleLoginForm">
+                    <input type="hidden" name="RequestedRole" id="RequestedRole" />
+
+                    <div id="modalLoginError" class="alert alert-danger d-none"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input name="Username" id="modalUsername" class="form-control form-control-lg" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input name="Password" id="modalPassword" type="password" class="form-control form-control-lg" required />
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-outline-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Sign in</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+@section Scripts {
+    <script>
+        (function() {
+            const modalEl = document.getElementById('roleLoginModal');
+            const modal = new bootstrap.Modal(modalEl);
+            const modalError = document.getElementById('modalLoginError');
+            const form = document.getElementById('roleLoginForm');
+
+            function openLogin(role) {
+                document.getElementById('RequestedRole').value = role;
+                document.getElementById('roleLoginModalLabel').innerText = 'Sign in - ' + role;
+                document.getElementById('modalUsername').value = '';
+                document.getElementById('modalPassword').value = '';
+                modalError.classList.add('d-none');
+                modal.show();
+                setTimeout(() => document.getElementById('modalUsername').focus(), 200);
+            }
+
+            // Cards and buttons
+            document.querySelectorAll('[data-role]').forEach(el => {
+                el.addEventListener('click', function (e) {
+                    const role = this.getAttribute('data-role');
+                    if (role) openLogin(role);
+                });
+            });
+
+            // Intercept modal form submission and send AJAX to /Account/Login
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                modalError.classList.add('d-none');
+
+                const data = new FormData(form);
+
+                try {
+                    const resp = await fetch(form.action, {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        body: data
+                    });
+
+                    const json = await resp.json();
+                    if (!json.success) {
+                        modalError.classList.remove('d-none');
+                        modalError.innerText = json.message || 'Login failed';
+                        return;
+                    }
+
+                    // success
+                    modal.hide();
+                    window.location.href = json.redirectUrl || '/';
+                }
+                catch (err) {
+                    modalError.classList.remove('d-none');
+                    modalError.innerText = 'Login failed';
+                }
+            });
+
+            // Allow clicking the whole card
+            document.querySelectorAll('.module-card').forEach(card => {
+                card.style.cursor = 'pointer';
+            });
+        })();
+    </script>
+}

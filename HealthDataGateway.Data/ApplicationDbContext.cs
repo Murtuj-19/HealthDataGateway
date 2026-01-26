@@ -1,6 +1,7 @@
-﻿using System;
-using HealthDataGateway.Data.Models;
+﻿using HealthDataGateway.Data.Models;
+using HealthDataGateway.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 
 namespace HealthDataGateway.Data
@@ -23,6 +24,9 @@ namespace HealthDataGateway.Data
 
         // Read-only view mapping
         public DbSet<GatewayDashboard> GatewayDashboard { get; set; }
+
+        // Users
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -175,6 +179,21 @@ namespace HealthDataGateway.Data
                 entity.HasNoKey();
                 entity.ToView("vw_GatewayDashboard");
             });
+            // User
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.UserId);
+                entity.HasIndex(e => e.Username).IsUnique();
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+            });
+
+            // Seed test users
+            modelBuilder.Entity<User>().HasData(
+                new User { UserId = 1, Username = "connector", Email = "connector@example.com", PasswordHash = "Password123!", UserType = "CONNECTOR", IsActive = true, CreatedAt = DateTime.Now },
+                new User { UserId = 2, Username = "source", Email = "source@example.com", PasswordHash = "Password123!", UserType = "SOURCE", IsActive = true, CreatedAt = DateTime.Now },
+                new User { UserId = 3, Username = "target", Email = "target@example.com", PasswordHash = "Password123!", UserType = "TARGET", IsActive = true, CreatedAt = DateTime.Now }
+            );
 
             // Seed Data
             modelBuilder.Entity<Hospital>().HasData(

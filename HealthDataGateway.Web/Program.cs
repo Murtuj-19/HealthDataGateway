@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using HealthDataGateway.Data;
-using HealthDataGateway.Services.Interfaces;
 using HealthDataGateway.Services.Implementation;
+using HealthDataGateway.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +43,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseSession();
-app.UseAuthorization();
 
 app.MapRazorPages();
 

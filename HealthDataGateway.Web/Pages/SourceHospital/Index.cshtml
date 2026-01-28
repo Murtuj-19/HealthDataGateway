@@ -1,265 +1,391 @@
-﻿@page
+@page
 @model HealthDataGateway.Web.Pages.SourceHospital.IndexModel
 @{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
     ViewData["Title"] = "Source Hospital Dashboard";
 }
 
 <style>
-    .stat-card {
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        cursor: pointer;
+    .source-layout {
+        display: flex;
+        gap: 0;
+        min-height: calc(100vh - 200px);
+        align-items: flex-start;
     }
 
-    .stat-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+    .source-sidebar {
+        width: 260px;
+        background: linear-gradient(180deg, #5568d3 0%, #667eea 100%);
+        padding: 0;
+        border-radius: 0;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+        position: fixed;
+        top: 72px;
+        left: 0;
+        bottom: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 1020;
     }
 
-    .btn-transfer-primary {
+    .source-sidebar::-webkit-scrollbar {
+        width: 0; /* hide scrollbar */
+    }
+
+    .source-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .source-sidebar::-webkit-scrollbar-thumb {
+        background: transparent;
+    }
+
+    .source-sidebar::-webkit-scrollbar-thumb:hover {
+        background: transparent;
+    }
+
+    .source-sidebar-header {
+        padding: 18px 16px;
+        background: linear-gradient(135deg, #4a5abc 0%, #5568d3 100%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .source-main {
+        margin-left: 260px;
+        padding: 20px 28px;
+        height: calc(100vh - 72px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: #f8f9fc;
+        box-sizing: border-box;
+    }
+
+    .source-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
         color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
+        padding: 16px 20px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+        position: static;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
-    .btn-transfer-primary:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        color: white;
+    .source-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .btn-transfer-primary:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+    .source-header p {
+        opacity: 0.92;
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 500;
     }
 
-    .status-badge-custom {
-        padding: 8px 14px;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.85rem;
+    .source-content-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-bottom: 0;
+        height: auto;
     }
 
-    .status-created {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        color: white;
+    .source-content-section.single {
+        grid-template-columns: 1fr;
     }
 
-    .status-queued {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-    }
-
-    .status-sent {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        color: white;
-    }
-
-    .table-icon {
-        margin-right: 8px;
-    }
-
-    .card-section {
-        border-radius: 12px;
+    .source-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
         overflow: hidden;
-        transition: all 0.3s ease;
-    }
-
-    .card-section:hover {
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
-    }
-
-    .patient-badge {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-
-    .no-data-empty {
+        border: 1px solid #eff3fa;
         display: flex;
         flex-direction: column;
+        min-height: 0;
+    }
+
+    .source-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 14px 18px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
         align-items: center;
-        justify-content: center;
-        padding: 60px 20px;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .source-card-body {
+        padding: 16px;
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        display: block;
+        min-height: 0;
+    }
+
+    .source-card-body::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .source-card-body::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .source-card-body::-webkit-scrollbar-thumb {
+        background: rgba(102, 126, 234, 0.1);
+        border-radius: 2px;
+    }
+
+    .source-card-body::-webkit-scrollbar-thumb:hover {
+        background: rgba(102, 126, 234, 0.2);
+    }
+
+    .source-card-body .table-responsive {
+        margin-bottom: 0;
+        overflow: visible;
+    }
+
+    .source-card-body table {
+        margin: 0;
+        width: 100%;
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+
+    .source-card-body table tbody tr:hover {
+        background: #f8f9fc;
+    }
+
+    .source-card-body table td {
+        padding: 10px 8px;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    .no-data-source {
+        text-align: center;
+        padding: 40px 20px;
         color: #999;
     }
 
-    .no-data-empty i {
-        font-size: 4rem;
-        opacity: 0.4;
-        margin-bottom: 15px;
+    .no-data-source i {
+        font-size: 2.5rem;
+        opacity: 0.15;
+        display: block;
+        margin-bottom: 12px;
     }
 
-    .no-data-empty p {
-        margin: 0;
+    .no-data-source h5 {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        margin-bottom: 6px;
+        font-weight: 700;
+    }
+
+    .btn-outline-primary {
+        border: 1.5px solid #667eea;
+        color: #667eea;
+        font-weight: 600;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-outline-primary:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: transparent;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    @@media (max-width: 1024px) {
+        .source-layout {
+            flex-direction: column;
+        }
+
+        .source-sidebar {
+            position: relative;
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            top: auto;
+        }
+
+        .source-main {
+            margin-left: 0;
+            padding: 25px 20px;
+            height: auto;
+            overflow: visible;
+        }
+
+        .source-header {
+            padding: 30px;
+        }
+
+        .source-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .source-content-section {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .source-header h1 {
+            font-size: 1.4rem;
+        }
+    }
+
+    .source-nav-section {
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .source-nav-title {
+        padding: 10px 16px 8px;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.35);
+        font-weight: 700;
+        letter-spacing: 0.8px;
+    }
+
+    .source-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 16px;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-left: 2px solid transparent;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .source-nav-link:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        padding-left: 20px;
+        border-left-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .source-nav-link.active {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border-left-color: white;
+        font-weight: 600;
     }
 </style>
 
-<div class="container-fluid fade-in">
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body text-white p-5">
-                    <h1 class="display-5 fw-bold mb-2">
-                        <i class="bi bi-hospital-fill"></i> Source Hospital Dashboard
-                    </h1>
-                    <p class="lead mb-0">
-                        <i class="bi bi-geo-alt-fill"></i> City General Hospital - Manage Patient Transfers
-                    </p>
-                </div>
+<div class="container-fluid fade-in" style="padding: 0;">
+    <div class="source-layout">
+        <!-- Sidebar -->
+        <div class="source-sidebar">
+            <div class="source-sidebar-header">
+                <h4><i class="bi bi-hospital"></i> Source Hospital</h4>
+                <span class="badge"><i class="bi bi-check-circle"></i> Active</span>
+            </div>
+
+            <div class="source-nav-section">
+                <div class="source-nav-title">Transfer Management</div>
+                <a class="source-nav-link active" data-view="dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a class="source-nav-link" data-view="create-transfer">
+                    <i class="bi bi-send-fill"></i>
+                    <span>Create Transfer</span>
+                </a>
+            </div>
+
+            <div class="source-nav-section">
+                <div class="source-nav-title">Transfer Status</div>
+               
+                <a class="source-nav-link" data-view="queued">
+                    <i class="bi bi-hourglass"></i>
+                    <span>Queued</span>
+                </a>
+                <a class="source-nav-link" data-view="sent">
+                    <i class="bi bi-send"></i>
+                    <span>Sent</span>
+                </a>
+            </div>
+
+            <div class="source-nav-section">
+                <div class="source-nav-title">Support</div>
+                <a href="#" class="source-nav-link">
+                    <i class="bi bi-question-circle"></i>
+                    <span>Help</span>
+                </a>
             </div>
         </div>
-    </div>
 
-    <!-- Success Alert -->
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" style="border: none; border-left: 4px solid #27ae60;">
-            <i class="bi bi-check-circle-fill fs-5"></i>
-            <strong>Success!</strong> @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
+        <!-- Main Content -->
+        <div class="source-main">
+            <div class="source-header">
+                <h1><i class="bi bi-hospital"></i> Source Hospital</h1>
+                <p>City General Hospital - Manage Patient Transfers</p>
+            </div>
 
-    <!-- Statistics Cards -->
-    <div class="row g-3 mb-5">
-        <div class="col-md-4">
-            <div class="card stat-card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase opacity-75 mb-2">
-                                <i class="bi bi-people"></i> Total Patients
-                            </h6>
-                            <h2 class="display-4 fw-bold mb-0">@Model.Patients.Count</h2>
-                        </div>
-                        <i class="bi bi-people-fill opacity-50" style="font-size: 3.5rem;"></i>
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 25px; border: none; background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.08) 100%); border-left: 4px solid #27ae60;">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <strong>Success!</strong> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <!-- Dashboard View (Default) -->
+            <div id="dashboard-view" class="source-content-section">
+                <!-- Patients Section -->
+                <div class="source-card">
+                    <div class="source-card-header">
+                        <i class="bi bi-people"></i>
+                        <span>Patient Registry</span>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card stat-card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase opacity-75 mb-2">
-                                <i class="bi bi-send"></i> Transfer Requests
-                            </h6>
-                            <h2 class="display-4 fw-bold mb-0">@Model.TransferRequests.Count</h2>
-                        </div>
-                        <i class="bi bi-arrow-right-circle-fill opacity-50" style="font-size: 3.5rem;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card stat-card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase opacity-75 mb-2">
-                                <i class="bi bi-hourglass"></i> Pending
-                            </h6>
-                            <h2 class="display-4 fw-bold mb-0">
-                                @Model.TransferRequests.FindAll(t => t.Status == "CREATED" || t.Status == "QUEUED").Count
-                            </h2>
-                        </div>
-                        <i class="bi bi-hourglass-split opacity-50" style="font-size: 3.5rem;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Patient Management and Transfer Requests -->
-    <div class="row g-4">
-        <!-- Patient Management Section -->
-        <div class="col-lg-6">
-            <div class="card card-section border-0 shadow-lg h-100">
-                <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-person-lines-fill"></i> Patient Selection
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <form method="get" asp-page="./CreateTransfer" id="createTransferForm">
-                        <div class="d-grid gap-2 mb-4">
-                            <button id="createTransferBtn" type="submit" class="btn btn-transfer-primary btn-lg" disabled>
-                                <i class="bi bi-send-fill"></i> Create Transfer for Selected Patient
-                            </button>
-                        </div>
-
-                        @if (Model.Patients.Count == 0)
+                    <div class="source-card-body">
+                        @if ((Model.Patients == null) || !Model.Patients.Any())
                         {
-                            <div class="no-data-empty">
+                            <div class="no-data-source">
                                 <i class="bi bi-inbox"></i>
-                                <p class="fs-5">No patients registered yet</p>
+                                <h5>No patients</h5>
+                                <p class="text-muted">Create patient records to get started.</p>
                             </div>
                         }
                         else
                         {
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th style="width: 50px;"></th>
-                                            <th><i class="table-icon bi bi-hash"></i>Patient ID</th>
-                                            <th><i class="table-icon bi bi-person"></i>Name</th>
-                                            <th><i class="table-icon bi bi-calendar"></i>DOB</th>
-                                            <th><i class="table-icon bi bi-gender-ambiguous"></i>Gender</th>
-                                            <th><i class="table-icon bi bi-gear"></i>Actions</th>
-                                        </tr>
-                                    </thead>
+                                <table class="table table-sm table-hover">
                                     <tbody>
-                                        @foreach (var patient in Model.Patients)
+                                        @foreach (var patient in Model.Patients ?? Enumerable.Empty<HealthDataGateway.Data.Models.Patient>())
                                         {
                                             <tr>
                                                 <td>
-                                                    <input type="radio" name="patientId" value="@patient.PatientId" class="form-check-input select-patient" />
+                                                    <strong>@patient.FullName</strong>
+                                                    <div style="font-size: 0.8rem; color: #999;"><i class="bi bi-person-badge"></i> @patient.LocalPatientId</div>
                                                 </td>
-                                                <td>
-                                                    <span class="patient-badge">@patient.LocalPatientId</span>
-                                                </td>
-                                                <td class="fw-semibold">@patient.FullName</td>
-                                                <td>
-                                                    @if (patient.DOB.HasValue)
-                                                    {
-                                                        <span>@patient.DOB.Value.ToString("MMM dd, yyyy")</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="text-muted">-</span>
-                                                    }
-                                                </td>
-                                                <td>
-                                                    @if (patient.Gender == "M")
-                                                    {
-                                                        <span><i class="bi bi-gender-ambiguous"></i> Male</span>
-                                                    }
-                                                    else if (patient.Gender == "F")
-                                                    {
-                                                        <span><i class="bi bi-gender-ambiguous"></i> Female</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="text-muted">-</span>
-                                                    }
-                                                </td>
-                                                <td>
-                                                    <a asp-page="./CreateTransfer" asp-route-patientId="@patient.PatientId" 
-                                                       class="btn btn-sm btn-outline-primary fw-bold">
-                                                        <i class="bi bi-send-fill"></i> Transfer
+                                                <td style="text-align: right;">
+                                                    <a asp-page="./CreateTransfer" asp-route-patientId="@patient.PatientId" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-arrow-right"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -268,106 +394,317 @@
                                 </table>
                             </div>
                         }
-                    </form>
+                    </div>
+                </div>
+
+                <!-- Transfer Requests Section -->
+                <div class="source-card">
+                    <div class="source-card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="bi bi-arrow-right-circle"></i>
+                        <span>All Transfers</span>
+                    </div>
+                    <div class="source-card-body">
+                        @if ((Model.TransferRequests == null) || !Model.TransferRequests.Any())
+                        {
+                            <div class="no-data-source">
+                                <i class="bi bi-send-x"></i>
+                                <h5>No transfers</h5>
+                                <p class="text-muted">No transfer requests found.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <tbody>
+                                        @foreach (var request in Model.TransferRequests ?? Enumerable.Empty<HealthDataGateway.Data.Models.TransferRequest>())
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <strong>@request.Patient.FullName</strong>
+                                                    <div style="font-size: 0.8rem; color: #999;"><i class="bi bi-building"></i> @request.TargetHospital.HospitalName</div>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    @if (request.Status == "CREATED")
+                                                    {
+                                                        <span class="badge bg-info">CREATED</span>
+                                                    }
+                                                    else if (request.Status == "QUEUED")
+                                                    {
+                                                        <span class="badge bg-warning text-dark">QUEUED</span>
+                                                    }
+                                                    else if (request.Status == "SENT")
+                                                    {
+                                                        <span class="badge bg-primary">SENT</span>
+                                                    }
+                                                    else if (request.Status == "ACCEPTED")
+                                                    {
+                                                        <span class="badge bg-success">ACCEPTED</span>
+                                                    }
+                                                    else if (request.Status == "REJECTED")
+                                                    {
+                                                        <span class="badge bg-danger">REJECTED</span>
+                                                    }
+                                                    else if (request.Status == "CANCELLED")
+                                                    {
+                                                        <span class="badge bg-secondary">CANCELLED</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-light text-dark">@request.Status</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Transfer Requests Section -->
-        <div class="col-lg-6">
-            <div class="card card-section border-0 shadow-lg h-100">
-                <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-arrow-right-circle-fill"></i> Transfer Requests
-                    </h5>
+            <!-- Create Transfer View -->
+            <div id="create-transfer-view" class="source-content-section single hidden">
+                <div class="source-card">
+                    <div class="source-card-header">
+                        <i class="bi bi-people"></i>
+                        <span>Select Patient to Create Transfer</span>
+                    </div>
+                    <div class="source-card-body">
+                        @if ((Model.Patients == null) || !Model.Patients.Any())
+                        {
+                            <div class="no-data-source">
+                                <i class="bi bi-inbox"></i>
+                                <h5>No patients</h5>
+                                <p class="text-muted">Create patient records first to initiate transfers.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <tbody>
+                                        @foreach (var patient in Model.Patients ?? Enumerable.Empty<HealthDataGateway.Data.Models.Patient>())
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <strong>@patient.FullName</strong>
+                                                    <div style="font-size: 0.8rem; color: #999;"><i class="bi bi-person-badge"></i> @patient.LocalPatientId</div>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <a asp-page="./CreateTransfer" asp-route-patientId="@patient.PatientId" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-arrow-right"></i> Create Transfer
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
                 </div>
-                <div class="card-body p-4">
-                    @if (Model.TransferRequests.Count == 0)
-                    {
-                        <div class="no-data-empty">
-                            <i class="bi bi-send-x"></i>
-                            <p class="fs-5">No transfer requests yet</p>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th><i class="table-icon bi bi-hash"></i>ID</th>
-                                        <th><i class="table-icon bi bi-person"></i>Patient</th>
-                                        <th><i class="table-icon bi bi-building"></i>Target</th>
-                                        <th><i class="table-icon bi bi-activity"></i>Status</th>
-                                        <th><i class="table-icon bi bi-calendar"></i>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var request in Model.TransferRequests)
-                                    {
-                                        <tr>
-                                            <td><strong>#@request.TransferRequestId</strong></td>
-                                            <td class="fw-semibold">@request.Patient.FullName</td>
-                                            <td>
-                                                <span class="badge bg-info text-dark">
-                                                    @request.TargetHospital.HospitalName
-                                                </span>
-                                            </td>
-                                            <td>
-                                                @if (request.Status == "SENT")
-                                                {
-                                                    <span class="status-badge-custom status-sent">
-                                                        <i class="bi bi-check-circle-fill"></i> SENT
-                                                    </span>
-                                                }
-                                                else if (request.Status == "QUEUED")
-                                                {
-                                                    <span class="status-badge-custom status-queued">
-                                                        <i class="bi bi-hourglass-split"></i> QUEUED
-                                                    </span>
-                                                }
-                                                else if (request.Status == "CREATED")
-                                                {
-                                                    <span class="status-badge-custom status-created">
-                                                        <i class="bi bi-arrow-right"></i> CREATED
-                                                    </span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-secondary">@request.Status</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <small class="text-muted">@request.CreatedAt.ToString("MMM dd, HH:mm")</small>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
+            </div>
+
+            <!-- Patients Only View -->
+            <div id="patients-view" class="source-content-section single hidden">
+                <div class="source-card">
+                    <div class="source-card-header">
+                        <i class="bi bi-people"></i>
+                        <span>All Patients</span>
+                    </div>
+                    <div class="source-card-body">
+                        @if ((Model.Patients == null) || !Model.Patients.Any())
+                        {
+                            <div class="no-data-source">
+                                <i class="bi bi-inbox"></i>
+                                <h5>No patients</h5>
+                                <p class="text-muted">Create patient records to get started.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <tbody>
+                                        @foreach (var patient in Model.Patients ?? Enumerable.Empty<HealthDataGateway.Data.Models.Patient>())
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <strong>@patient.FullName</strong>
+                                                    <div style="font-size: 0.8rem; color: #999;"><i class="bi bi-person-badge"></i> @patient.LocalPatientId</div>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <a asp-page="./CreateTransfer" asp-route-patientId="@patient.PatientId" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-arrow-right"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transfer Status Views (Created, Queued, Sent) -->
+            <div id="created-view" class="source-content-section single hidden">
+                <div class="source-card">
+                    <div class="source-card-header">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Created Transfers</span>
+                    </div>
+                    <div class="source-card-body">
+                        @{
+                            var createdRequests = Model.TransferRequests?.Where(t => t.Status == "CREATED").ToList();
+                        }
+                        @if ((createdRequests == null) || !createdRequests.Any())
+                        {
+                            <div class="no-data_source">
+                                <i class="bi bi-send-x"></i>
+                                <h5>No created transfers</h5>
+                                <p class="text-muted">Create new transfer requests to see them here.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <tbody>
+                                        @foreach (var request in createdRequests)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <strong>@request.Patient.FullName</strong>
+                                                    <div style="font-size: 0.8rem; color: #999;"><i class="bi bi-building"></i> @request.TargetHospital.HospitalName</div>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <span class="badge bg-info">@request.Status</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div id="queued-view" class="source-content-section single hidden">
+                <div class="source-card">
+                    <div class="source-card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="bi bi-hourglass"></i>
+                        <span>Queued Transfers</span>
+                    </div>
+                    <div class="source-card-body">
+                        @{
+                            var queuedRequests = Model.TransferRequests?.Where(t => t.Status == "QUEUED").ToList();
+                        }
+                        @if ((queuedRequests == null) || !queuedRequests.Any())
+                        {
+                            <div class="no-data_source">
+                                <i class="bi bi-send-x"></i>
+                                <h5>No queued transfers</h5>
+                                <p class="text-muted">Transfers will appear here when queued.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <tbody>
+                                        @foreach (var request in queuedRequests)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <strong>@request.Patient.FullName</strong>
+                                                    <div style="font-size: 0.8rem; color: #999;"><i class="bi bi-building"></i> @request.TargetHospital.HospitalName</div>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <span class="badge bg-warning">@request.Status</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div id="sent-view" class="source-content-section single hidden">
+                <div class="source-card">
+                    <div class="source-card-header" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <i class="bi bi-send"></i>
+                        <span>Sent Transfers</span>
+                    </div>
+                    <div class="source-card-body">
+                        @{
+                            var sentRequests = Model.TransferRequests?.Where(t => t.Status == "SENT").ToList();
+                        }
+                        @if ((sentRequests == null) || !sentRequests.Any())
+                        {
+                            <div class="no-data_source">
+                                <i class="bi bi-send-x"></i>
+                                <h5>No sent transfers</h5>
+                                <p class="text-muted">Completed transfers will appear here.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <tbody>
+                                        @foreach (var request in sentRequests)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <strong>@request.Patient.FullName</strong>
+                                                    <div style="font-size: 0.8rem; color: #999;"><i class="bi bi-building"></i> @request.TargetHospital.HospitalName</div>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <span class="badge bg-success">@request.Status</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        (function() {
-            const radios = document.querySelectorAll('.select-patient');
-            const btn = document.getElementById('createTransferBtn');
-
-            function updateButton() {
-                const anyChecked = Array.from(radios).some(r => r.checked);
-                btn.disabled = !anyChecked;
+<script>
+    document.querySelectorAll('.source-nav-link[data-view]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const view = this.getAttribute('data-view');
+            
+            // Hide all views
+            document.querySelectorAll('[id$="-view"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Show selected view
+            const viewElement = document.getElementById(view + '-view');
+            if (viewElement) {
+                viewElement.classList.remove('hidden');
             }
-
-            radios.forEach(r => r.addEventListener('change', updateButton));
-
-            // initialize
-            updateButton();
-        })();
-    </script>
-}
-
+            
+            // Update active nav link
+            document.querySelectorAll('.source-nav-link[data-view]').forEach(el => {
+                el.classList.remove('active');
+            });
+            this.classList.add('active');
+        });
+    });
+</script>

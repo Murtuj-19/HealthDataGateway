@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthDataGateway.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260126142351_AddUsersAndSeed")]
-    partial class AddUsersAndSeed
+    [Migration("20260127092126_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -216,14 +216,14 @@ namespace HealthDataGateway.Data.Migrations
                         new
                         {
                             HospitalId = 1,
-                            CreatedAt = new DateTime(2026, 1, 26, 19, 53, 50, 225, DateTimeKind.Local).AddTicks(9824),
+                            CreatedAt = new DateTime(2026, 1, 27, 14, 51, 26, 136, DateTimeKind.Local).AddTicks(8630),
                             HospitalName = "City General Hospital",
                             IsActive = true
                         },
                         new
                         {
                             HospitalId = 2,
-                            CreatedAt = new DateTime(2026, 1, 26, 19, 53, 50, 225, DateTimeKind.Local).AddTicks(9828),
+                            CreatedAt = new DateTime(2026, 1, 27, 14, 51, 26, 136, DateTimeKind.Local).AddTicks(8650),
                             HospitalName = "St. Mary's Medical Center",
                             IsActive = true
                         });
@@ -359,19 +359,10 @@ namespace HealthDataGateway.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -387,45 +378,39 @@ namespace HealthDataGateway.Data.Migrations
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            UserId = 1,
-                            CreatedAt = new DateTime(2026, 1, 26, 19, 53, 50, 225, DateTimeKind.Local).AddTicks(9407),
-                            Email = "connector@example.com",
-                            IsActive = true,
-                            PasswordHash = "Password123!",
-                            UserType = "CONNECTOR",
-                            Username = "connector"
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            CreatedAt = new DateTime(2026, 1, 26, 19, 53, 50, 225, DateTimeKind.Local).AddTicks(9432),
-                            Email = "source@example.com",
-                            IsActive = true,
-                            PasswordHash = "Password123!",
-                            UserType = "SOURCE",
-                            Username = "source"
-                        },
-                        new
-                        {
-                            UserId = 3,
-                            CreatedAt = new DateTime(2026, 1, 26, 19, 53, 50, 225, DateTimeKind.Local).AddTicks(9435),
-                            Email = "target@example.com",
-                            IsActive = true,
-                            PasswordHash = "Password123!",
-                            UserType = "TARGET",
-                            Username = "target"
-                        });
+            modelBuilder.Entity("HealthDataGateway.Models.UserToken", b =>
+                {
+                    b.Property<int>("TokenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TokenId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TokenId");
+
+                    b.ToTable("UserTokens");
                 });
 
             modelBuilder.Entity("HealthDataGateway.Data.Models.Acknowledgement", b =>

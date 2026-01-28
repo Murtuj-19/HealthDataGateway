@@ -1,264 +1,597 @@
 @page
 @model HealthDataGateway.Web.Pages.TargetHospital.IndexModel
 @{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
     ViewData["Title"] = "Target Hospital Dashboard";
 }
 
 <style>
-    .stat-card-target {
+    .target-layout {
+        display: flex;
+        gap: 0;
+        min-height: calc(100vh - 200px);
+    }
+
+    .target-sidebar {
+        width: 260px;
+        background: linear-gradient(180deg, #0099ff 0%, #4facfe 100%);
+        padding: 0;
+        border-radius: 0;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+        position: fixed;
+        top: 72px;
+        left: 0;
+        bottom: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 1020;
+    }
+
+    .target-sidebar::-webkit-scrollbar {
+        width: 0; /* hide scrollbar */
+    }
+
+    .target-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .target-sidebar::-webkit-scrollbar-thumb {
+        background: transparent;
+    }
+
+    .target-sidebar-header {
+        padding: 18px 16px;
+        background: linear-gradient(135deg, #0080d0 0%, #0099ff 100%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .target-sidebar-header h4 {
+        margin: 0 0 10px 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .target-sidebar-header .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 12px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .stat-card-target:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
-    }
-
-    .status-badge-custom {
-        padding: 8px 14px;
-        border-radius: 20px;
+        font-size: 0.75rem;
         font-weight: 600;
+    }
+
+    .target-nav-section {
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .target-nav-title {
+        padding: 10px 16px 8px;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.35);
+        font-weight: 700;
+        letter-spacing: 0.8px;
+    }
+
+    .table {
+        table-layout: fixed;
+    }
+
+    .patient-id {
         font-size: 0.85rem;
+        color: #999;
     }
 
-    .status-pending {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    .status-badge {
+        padding: 7px 14px;
+        border-radius: 20px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .btn-review {
+        background-color: #0dcaf0;
+        color: #fff;
+        border-radius: 20px;
+        padding: 5px 14px;
+    }
+
+        .btn-review:hover {
+            background-color: #0bb5d9;
+            color: #fff;
+        }
+
+    .target-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 16px;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-left: 2px solid transparent;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .target-nav-link:hover {
+        background: rgba(255, 255, 255, 0.08);
         color: white;
+        padding-left: 20px;
+        border-left-color: rgba(255, 255, 255, 0.6);
     }
 
-    .status-accepted {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    .target-nav-link.active {
+        background: rgba(255, 255, 255, 0.2);
         color: white;
+        border-left-color: white;
+        font-weight: 600;
     }
 
-    .status-rejected {
-        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        color: #333;
+    .target-nav-link i {
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    .target-main {
+        margin-left: 260px;
+        padding: 20px 28px;
+        height: calc(100vh - 72px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: #f0f7ff;
+        box-sizing: border-box;
+    }
+
+    .target-main * {
+            width: 100%;
+    }
+
+    .target-main::-webkit-scrollbar {
+        width: 0; /* hide scrollbar */
+    }
+
+    .target-main::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .target-main::-webkit-scrollbar-thumb {
+        background: transparent;
+    }
+
+    .target-main::-webkit-scrollbar-thumb:hover {
+        background: transparent;
+    }
+
+    .target-status-overview {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 18px;
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .target-status-item {
+        background: white;
+        padding: 18px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+        border: 1px solid #dce9f7;
+        border-top: 3px solid;
+        transition: all 0.2s ease;
+    }
+
+    .target-status-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        transform: translateY(-1px);
+    }
+
+    .target-status-item.pending {
+        border-top-color: #f5576c;
+    }
+
+    .target-status-item.accepted {
+        border-top-color: #38f9d7;
+    }
+
+    .target-status-item.rejected {
+        border-top-color: #fee140;
+    }
+
+    .target-status-item .count {
+        font-size: 2rem;
+        font-weight: 800;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .target-status-item.pending .count { color: #f5576c; }
+    .target-status-item.accepted .count { color: #38f9d7; }
+    .target-status-item.rejected .count { color: #fee140; }
+
+    .target-status-item .label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #2c3e50;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .target-header {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 16px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        margin-right: 0;
+        position: static;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .target-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .target-header p {
+        opacity: 0.92;
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .target-table-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+        overflow: hidden;
+        border: 1px solid #dce9f7;
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .target-table-header {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 14px 18px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .target-table-body {
+        padding: 0;
+        overflow-x: auto;
+    }
+
+    .target-table-body table {
+        margin: 0;
+    }
+
+    .target-table-body thead th {
+        background: #f0f7ff;
+        color: #0099ff;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 16px;
+        border-bottom: 2px solid #dce9f7;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .target-table-body tbody tr {
+        border-bottom: 1px solid #dce9f7;
+        transition: background 0.2s ease;
+    }
+
+    .target-table-body tbody tr:hover {
+        background: #f0f7ff;
+    }
+
+    .target-table-body tbody td {
+        padding: 12px;
+        vertical-align: middle;
+        color: #2c3e50;
+        font-size: 0.9rem;
     }
 
     .btn-review {
         background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         border: none;
         color: white;
-        font-weight: 600;
-        padding: 6px 16px;
-        border-radius: 20px;
-        transition: all 0.3s ease;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
     }
 
     .btn-review:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(79, 172, 254, 0.3);
+        box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
         color: white;
     }
 
-    .card-section {
-        border-radius: 12px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-    }
-
-    .card-section:hover {
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
-    }
-
-    .hospital-badge {
-        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-
-    .no-data-empty {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 60px 20px;
+    .no-data-target {
+        text-align: center;
+        padding: 80px 40px;
         color: #999;
     }
 
-    .no-data-empty i {
-        font-size: 4rem;
-        opacity: 0.4;
-        margin-bottom: 15px;
+    .no-data-target i {
+        font-size: 5rem;
+        opacity: 0.2;
+        display: block;
+        margin-bottom: 20px;
     }
 
-    .table-icon {
-        margin-right: 8px;
+    .no-data-target h5 {
+        font-size: 1.4rem;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 1024px) {
+        .target-layout {
+            flex-direction: column;
+        }
+
+        .target-sidebar {
+            position: relative;
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            top: auto;
+        }
+
+        .target-main {
+            margin-left: 0;
+            padding: 25px 20px;
+            height: auto;
+            overflow: visible;
+        }
+
+        .target-header {
+            padding: 30px;
+        }
+
+        .target-header h1 {
+            font-size: 1.8rem;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .target-header h1 {
+            font-size: 1.4rem;
+        }
     }
 </style>
 
-<div class="container-fluid fade-in">
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                <div class="card-body text-white p-5">
-                    <h1 class="display-5 fw-bold mb-2">
-                        <i class="bi bi-hospital-fill"></i> Target Hospital Dashboard
-                    </h1>
-                    <p class="lead mb-0">
-                        <i class="bi bi-inbox-fill"></i> St. Mary's Medical Center - Review Incoming Transfer Requests
-                    </p>
+<div class="container-fluid fade-in" style="padding: 0;">
+    <div class="target-layout">
+        <!-- Sidebar -->
+        <div class="target-sidebar">
+            <div class="target-sidebar-header">
+                <h4><i class="bi bi-inbox"></i> Target Hospital</h4>
+                <span class="badge"><i class="bi bi-check-circle"></i> Receiving</span>
+            </div>
+
+            <div class="target-nav-section">
+                <div class="target-nav-title">Navigation</div>
+                <a href="/TargetHospital/Index" class="target-nav-link @(string.IsNullOrEmpty(Model.Filter) ? "active" : "")">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/TargetHospital/Index?filter=PENDING" class="target-nav-link">
+                    <i class="bi bi-inbox"></i>
+                    <span>Pending</span>
+                </a>
+                <a href="/TargetHospital/Index?filter=ACCEPTED" class="target-nav-link">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Accepted</span>
+                </a>
+                <a href="/TargetHospital/Index?filter=REJECTED" class="target-nav-link">
+                    <i class="bi bi-x-circle"></i>
+                    <span>Rejected</span>
+                </a>
+            </div>
+
+           
+        </div>
+
+        <!-- Main Content -->
+        <div class="target-main" style="width:100%">
+            <div class="target-header">
+                <h1><i class="bi bi-inbox-fill"></i> Target Hospital</h1>
+                <p>St. Mary's Medical Center - Review Incoming Transfer Requests</p>
+            </div>
+
+            <!-- Request Status Overview -->
+           
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 25px; border: none; background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.08) 100%); border-left: 4px solid #27ae60;">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <strong>Success!</strong> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="target-status-overview">
+                <div class="target-status-item pending">
+                    <span class="count">@Model.PendingCount</span>
+                    <span class="label">Pending Requests</span>
+                </div>
+                <div class="target-status-item accepted">
+                    <span class="count">@Model.AcceptedCount</span>
+                    <span class="label">Accepted Requests</span>
+                </div>
+                <div class="target-status-item rejected">
+                    <span class="count">@Model.RejectedCount</span>
+                    <span class="label">Rejected Requests</span>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Success Alert -->
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" style="border: none; border-left: 4px solid #27ae60;">
-            <i class="bi bi-check-circle-fill fs-5"></i>
-            <strong>Success!</strong> @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
-    <!-- Statistics Cards -->
-    <div class="row g-3 mb-5">
-        <div class="col-md-4">
-            <div class="card stat-card-target border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase opacity-75 mb-2">
-                                <i class="bi bi-hourglass"></i> Pending
-                            </h6>
-                            <h2 class="display-4 fw-bold mb-0">@Model.PendingCount</h2>
-                        </div>
-                        <i class="bi bi-clock-history opacity-50" style="font-size: 3.5rem;"></i>
-                    </div>
+            <div class="target-table-card">
+                <div class="target-table-header">
+                    <i class="bi bi-list-ul"></i>
+                    <span>
+                        @if (string.IsNullOrEmpty(Model.Filter))
+                        {
+                            <span>Incoming Transfer Requests</span>
+                        }
+                        else
+                        {
+                            <span>@Model.Filter Requests</span>
+                        }
+                    </span>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card stat-card-target border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase opacity-75 mb-2">
-                                <i class="bi bi-check-circle"></i> Accepted
-                            </h6>
-                            <h2 class="display-4 fw-bold mb-0">@Model.AcceptedCount</h2>
-                        </div>
-                        <i class="bi bi-check-circle-fill opacity-50" style="font-size: 3.5rem;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card stat-card-target border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase opacity-75 mb-2">
-                                <i class="bi bi-x-circle"></i> Rejected
-                            </h6>
-                            <h2 class="display-4 fw-bold mb-0">@Model.RejectedCount</h2>
-                        </div>
-                        <i class="bi bi-x-circle-fill opacity-50" style="font-size: 3.5rem;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Incoming Requests Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card card-section border-0 shadow-lg">
-                <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-inbox-fill"></i> Incoming Transfer Requests
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    @if (Model.IncomingRequests.Count == 0)
+                <div class="target-table-body">
+                    @if ((Model.IncomingRequests == null) || !Model.IncomingRequests.Any())
                     {
-                        <div class="no-data-empty">
+                        <div class="no-data-target">
                             <i class="bi bi-inbox"></i>
-                            <p class="fs-5">No incoming requests</p>
+                            <h5>No requests found</h5>
+                            <p class="text-muted">There are no requests matching your filter.</p>
                         </div>
                     }
                     else
                     {
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
+
+
+                        <table class="table table-hover align-middle mb-0">
+                            <colgroup>
+                                <col style="width: 80px;">   <!-- Request ID -->
+                                <col style="width: 240px;">  <!-- Patient -->
+                                <col style="width: 220px;">  <!-- Hospital -->
+                                <col style="width: 140px;">  <!-- Status -->
+                                <col style="width: 130px;">  <!-- Received -->
+                                <col style="width: 110px;">  <!-- Actions -->
+                            </colgroup>
+
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-center"><i class="bi bi-hash"></i> ID</th>
+                                    <th><i class="bi bi-person"></i> Patient</th>
+                                    <th><i class="bi bi-building"></i> Source Hospital</th>
+                                    <th><i class="bi bi-activity"></i> Status</th>
+                                    <th><i class="bi bi-calendar"></i> Received</th>
+                                    <th class="text-center"><i class="bi bi-gear"></i> Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var request in Model.IncomingRequests
+                                                            ?? Enumerable.Empty<HealthDataGateway.Data.Models.IncomingTransferRequest>())
+                                {
                                     <tr>
-                                        <th><i class="table-icon bi bi-hash"></i>Request ID</th>
-                                        <th><i class="table-icon bi bi-person"></i>Patient Name</th>
-                                        <th><i class="table-icon bi bi-building"></i>Source Hospital</th>
-                                        <th><i class="table-icon bi bi-activity"></i>Status</th>
-                                        <th><i class="table-icon bi bi-calendar"></i>Received At</th>
-                                        <th><i class="table-icon bi bi-gear"></i>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var request in Model.IncomingRequests)
-                                    {
-                                        <tr>
-                                            <td><strong>#@request.IncomingRequestId</strong></td>
-                                            <td class="fw-semibold">
-                                                @if (request.ConnectorRequest?.TransferRequest?.Patient != null)
-                                                {
-                                                    @request.ConnectorRequest.TransferRequest.Patient.FullName
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">N/A</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <span class="hospital-badge">
-                                                    <i class="bi bi-building"></i> @request.SourceHospital.HospitalName
+                                        <!-- Request ID -->
+                                        <td class="text-center fw-bold text-nowrap">
+                                            #@request.IncomingRequestId
+                                        </td>
+
+                                        <!-- Patient -->
+                                        <td>
+                                            <div class="fw-semibold">
+                                                @(request.ConnectorRequest?.TransferRequest?.Patient?.FullName ?? "N/A")
+                                            </div>
+
+                                            @if (request.ConnectorRequest?.TransferRequest?.Patient != null)
+                                            {
+                                                <div class="patient-id">
+                                                    <i class="bi bi-person-badge"></i>
+                                                    @request.ConnectorRequest.TransferRequest.Patient.LocalPatientId
+                                                </div>
+                                            }
+                                        </td>
+
+                                        <!-- Hospital -->
+                                        <td>
+                                            <span class="badge bg-info text-dark text-truncate">
+                                                <i class="bi bi-building"></i>
+                                                @request.SourceHospital.HospitalName
+                                            </span>
+                                        </td>
+
+                                        <!-- Status -->
+                                        <td>
+                                            @if (request.IncomingStatus == "PENDING")
+                                            {
+                                                <span class="status-badge"
+                                                      style="background: linear-gradient(135deg,#f093fb,#f5576c); color:white;">
+                                                    <i class="bi bi-hourglass-split"></i> PENDING
                                                 </span>
-                                            </td>
-                                            <td>
-                                                @if (request.IncomingStatus == "PENDING")
-                                                {
-                                                    <span class="status-badge-custom status-pending">
-                                                        <i class="bi bi-hourglass-split"></i> PENDING
-                                                    </span>
-                                                }
-                                                else if (request.IncomingStatus == "ACCEPTED")
-                                                {
-                                                    <span class="status-badge-custom status-accepted">
-                                                        <i class="bi bi-check-circle-fill"></i> ACCEPTED
-                                                    </span>
-                                                }
-                                                else if (request.IncomingStatus == "REJECTED")
-                                                {
-                                                    <span class="status-badge-custom status-rejected">
-                                                        <i class="bi bi-x-circle-fill"></i> REJECTED
-                                                    </span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <small class="text-muted">@request.ReceivedAt.ToString("MMM dd, yyyy HH:mm:ss")</small>
-                                            </td>
-                                            <td>
-                                                <a asp-page="./ViewRequest" asp-route-id="@request.IncomingRequestId"
-                                                   class="btn btn-sm btn-review">
-                                                    <i class="bi bi-eye-fill"></i> Review
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                            }
+                                            else if (request.IncomingStatus == "ACCEPTED")
+                                            {
+                                                <span class="status-badge"
+                                                      style="background: linear-gradient(135deg,#43e97b,#38f9d7); color:white;">
+                                                    <i class="bi bi-check-circle-fill"></i> ACCEPTED
+                                                </span>
+                                            }
+                                            else if (request.IncomingStatus == "REJECTED")
+                                            {
+                                                <span class="status-badge"
+                                                      style="background: linear-gradient(135deg,#fa709a,#fee140); color:#333;">
+                                                    <i class="bi bi-x-circle-fill"></i> REJECTED
+                                                </span>
+                                            }
+                                        </td>
+
+                                        <!-- Received -->
+                                        <td>
+                                            <small class="text-muted text-nowrap">
+                                                @request.ReceivedAt.ToString("MMM dd, HH:mm")
+                                            </small>
+                                        </td>
+
+                                        <!-- Actions -->
+                                        <td class="text-center">
+                                            <a asp-page="./ViewRequest"
+                                               asp-route-id="@request.IncomingRequestId"
+                                               class="btn btn-sm btn-review">
+                                                <i class="bi bi-eye-fill"></i> Review
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
                     }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.target-nav-link, .target-status-card').forEach(link => {
+        const filter = new URLSearchParams(window.location.search).get('filter');
+        if (!filter && link.getAttribute('href') === '/TargetHospital/Index') link.classList.add('active');
+        if (filter && link.getAttribute('href') && link.getAttribute('href').includes(filter)) link.classList.add('active');
+    });
+</script>

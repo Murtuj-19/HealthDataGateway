@@ -1,230 +1,521 @@
-﻿@page
+@page
 @model HealthDataGateway.Web.Pages.Connector.IndexModel
 @{
     ViewData["Title"] = "Connector Gateway Dashboard";
 }
 
 <style>
-    .connector-badge-success {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    .connector-layout {
+        display: flex;
+        gap: 0;
+        min-height: calc(100vh - 200px);
+    }
+
+    .connector-sidebar {
+        width: 280px;
+        background: linear-gradient(180deg, #1a2332 0%, #2c3e50 100%);
+        padding: 0;
+        border-radius: 0;
+        box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
+        position: fixed;
+        top: 72px;
+        left: 0;
+        bottom: 0;
+        overflow-y: auto;
+        z-index: 1020;
+    }
+
+    .connector-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .connector-sidebar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .connector-sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+    }
+
+    .connector-sidebar-header {
+        padding: 30px 20px;
+        background: linear-gradient(135deg, #0f1823 0%, #1a2332 100%);
+        border-bottom: 1px solid rgba(102, 126, 234, 0.3);
         color: white;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .connector-sidebar-header h4 {
+        margin: 0 0 12px 0;
+        font-size: 1.15rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .connector-sidebar-header .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.2) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.4);
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .connector-nav-section {
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .connector-nav-title {
+        padding: 12px 20px 10px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.4);
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .connector-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 20px;
+        color: rgba(255, 255, 255, 0.75);
+        text-decoration: none;
+        transition: all 0.25s ease;
+        border-left: 3px solid transparent;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .connector-nav-link:hover {
+        background: rgba(102, 126, 234, 0.15);
+        color: white;
+        padding-left: 25px;
+        border-left-color: #667eea;
+    }
+
+    .connector-nav-link.active {
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.25) 0%, rgba(102, 126, 234, 0.05) 100%);
+        color: #a8c5ff;
+        border-left-color: #667eea;
+        font-weight: 600;
+    }
+
+    .connector-nav-link i {
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    .connector-main {
+        margin-left: 280px;
+       /*  padding: 40px 30px; */
+        height: calc(100vh - 72px);
+        overflow: auto;
+        background: #f8f9fb;
+    }
+
+    .connector-main::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .connector-main::-webkit-scrollbar-track {
+        background: #e8eaf2;
+    }
+
+    .connector-main::-webkit-scrollbar-thumb {
+        background: #a8c5ff;
+        border-radius: 4px;
+    }
+
+    .connector-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 18px 22px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        position: static;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .connector-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .connector-header p {
+        opacity: 0.9;
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .status-overview-row {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+    }
+
+    .status-box {
+        flex: 1;
+        min-width: 160px;
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border-top: 4px solid;
+        transition: all 0.3s ease;
+    }
+
+    .status-box:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+
+    .status-box.processing {
+        border-top-color: #f5576c;
+    }
+
+    .status-box.delivered {
+        border-top-color: #38f9d7;
+    }
+
+    .status-box .num {
+        font-size: 2.2rem;
+        font-weight: 800;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .status-box.processing .num {
+        color: #f5576c;
+    }
+
+    .status-box.delivered .num {
+        color: #38f9d7;
+    }
+
+    .status-box .label {
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .connector-table-card {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        border: 1px solid #e8eaf2;
+    }
+
+    .connector-table-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 24px 30px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .connector-table-body {
+        padding: 0;
+        overflow-x: auto;
+    }
+
+    .connector-table-body table {
+        margin: 0;
+    }
+
+    .connector-table-body thead th {
+        background: #f8f9fb;
+        color: #2c3e50;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 16px;
+        border-bottom: 2px solid #e8eaf2;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .connector-table-body tbody tr {
+        border-bottom: 1px solid #e8eaf2;
+        transition: background 0.2s ease;
+    }
+
+    .connector-table-body tbody tr:hover {
+        background: #f8f9fb;
+    }
+
+    .connector-table-body tbody td {
+        padding: 16px;
+        vertical-align: middle;
+        color: #2c3e50;
     }
 
     .table-status-badge {
-        padding: 6px 12px;
+        padding: 7px 14px;
         border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
     }
 
     .btn-deliver {
         background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
         border: none;
         color: white;
-        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
         transition: all 0.3s ease;
     }
 
     .btn-deliver:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(67, 233, 123, 0.3);
+        box-shadow: 0 8px 20px rgba(67, 233, 123, 0.3);
         color: white;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 80px 40px;
+        color: #999;
+    }
+
+    .no-data i {
+        font-size: 5rem;
+        opacity: 0.2;
+        display: block;
+        margin-bottom: 20px;
+    }
+
+    .no-data h5 {
+        font-size: 1.4rem;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 1024px) {
+        .connector-layout {
+            flex-direction: column;
+        }
+
+        .connector-sidebar {
+            position: relative;
+            width: 100%;
+            height: auto;
+            max-height: 320px;
+        }
+
+        .connector-main {
+            margin-left: 0;
+            padding: 20px;
+            padding-top: 12px;
+            height: auto;
+            overflow: visible;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .connector-header h1 {
+            font-size: 1.4rem;
+        }
+
+        .status-box {
+            min-width: 140px;
+            padding: 16px;
+        }
+
+        .status-box .num {
+            font-size: 1.8rem;
+        }
     }
 </style>
 
-<div class="container-fluid fade-in">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);">
-                <div class="card-body text-white p-4">
-                    <h1 class="display-5 fw-bold mb-2">
-                        <i class="bi bi-gear-wide-connected"></i> Connector Gateway Dashboard
-                    </h1>
-                    <p class="lead mb-0">
-                        <i class="bi bi-shield-lock"></i> Secure Data Exchange Middleware - AES-256 Encrypted
-                    </p>
+<div class="container-fluid fade-in" style="padding: 0;">
+    <div class="connector-layout">
+        <!-- Sidebar -->
+        <div class="connector-sidebar">
+            <div class="connector-sidebar-header">
+                <h4><i class="bi bi-gear-wide-connected"></i> Connector</h4>
+                <span class="badge"><i class="bi bi-shield-lock"></i> Encrypted</span>
+            </div>
+
+            <div class="connector-nav-section">
+                <div class="connector-nav-title">Navigation</div>
+                <a href="/Connector/Index" class="connector-nav-link @(string.IsNullOrEmpty(Model.Filter) ? "active" : "")">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>All Requests</span>
+                </a>
+                <a href="/Connector/Index?filter=PROCESSING" class="connector-nav-link @(Model.Filter == "PROCESSING" ? "active" : "")">
+                    <i class="bi bi-hourglass-split"></i>
+                    <span>Processing</span>
+                </a>
+                <a href="/Connector/Index?filter=DELIVERED" class="connector-nav-link @(Model.Filter == "DELIVERED" ? "active" : "")">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Delivered</span>
+                </a>
+            </div>
+
+           
+        </div>
+
+        <!-- Main Content -->
+        <div class="connector-main">
+            <div class="connector-header">
+                <h1><i class="bi bi-gear-wide-connected"></i> Connector Gateway</h1>
+                <p>Manage encrypted data transfers securely</p>
+            </div>
+
+            <!-- Status overview -->
+            <div class="status-overview-row">
+                <div class="status-box processing">
+                    <span class="num">@Model.ProcessingCount</span>
+                    <span class="label"><i class="bi bi-hourglass-split"></i> Processing</span>
+                </div>
+                <div class="status-box delivered">
+                    <span class="num">@Model.DeliveredCount</span>
+                    <span class="label"><i class="bi bi-check-circle"></i> Delivered</span>
                 </div>
             </div>
-        </div>
-    </div>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm">
-            <i class="bi bi-check-circle-fill fs-5"></i>
-            <strong>Success!</strong> @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-lg h-100 cursor-pointer" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 25px rgba(245, 87, 108, 0.3)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
-                <div class="card-body text-white p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase opacity-75 mb-2">
-                                <i class="bi bi-hourglass-split"></i> Processing
-                            </h6>
-                            <h2 class="display-4 fw-bold mb-0">@Model.ProcessingCount</h2>
-                        </div>
-                        <i class="bi bi-hourglass-split opacity-50" style="font-size: 4rem;"></i>
-                    </div>
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 25px; border: none; background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.08) 100%); border-left: 4px solid #27ae60;">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <strong>Success!</strong> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-            </div>
-        </div>
+            }
 
-        <div class="col-md-4">
-            <div class="card border-0 shadow-lg h-100 cursor-pointer connector-badge-success" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 25px rgba(67, 233, 123, 0.3)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
-                <div class="card-body text-white p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase opacity-75 mb-2">
-                                <i class="bi bi-check-circle"></i> Delivered
-                            </h6>
-                            <h2 class="display-4 fw-bold mb-0">@Model.DeliveredCount</h2>
-                        </div>
-                        <i class="bi bi-check-circle-fill opacity-50" style="font-size: 4rem;"></i>
-                    </div>
+            <div class="connector-table-card">
+                <div class="connector-table-header">
+                    <i class="bi bi-list-ul"></i>
+                    <span>
+                        @if (string.IsNullOrEmpty(Model.Filter))
+                        {
+                            <span>All Connector Requests</span>
+                        }
+                        else
+                        {
+                            <span>@Model.Filter Requests</span>
+                        }
+                    </span>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card border-0 shadow-lg h-100 cursor-pointer" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 25px rgba(250, 112, 154, 0.3)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
-                <div class="card-body text-white p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase opacity-75 mb-2">
-                                <i class="bi bi-x-circle"></i> Failed
-                            </h6>
-                            <h2 class="display-4 fw-bold mb-0">@Model.FailedCount</h2>
-                        </div>
-                        <i class="bi bi-x-circle-fill opacity-50" style="font-size: 4rem;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-lg">
-                <div class="card-header text-white py-3" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-list-ul"></i> All Connector Requests
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    @if (Model.ConnectorRequests.Count == 0)
+                <div class="connector-table-body">
+                    @if ((Model.ConnectorRequests == null) || !Model.ConnectorRequests.Any())
                     {
-                        <div class="text-center py-5">
-                            <i class="bi bi-inbox text-muted" style="font-size: 5rem;"></i>
-                            <p class="text-muted mt-3 fs-5">No connector requests</p>
+                        <div class="no-data">
+                            <i class="bi bi-inbox"></i>
+                            <h5>No requests found</h5>
+                            <p class="text-muted">There are no requests matching your filter.</p>
                         </div>
                     }
                     else
                     {
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-dark">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th><i class="bi bi-hash"></i> ID</th>
+                                    <th><i class="bi bi-person"></i> Patient</th>
+                                    <th><i class="bi bi-building"></i> Source</th>
+                                    <th><i class="bi bi-building"></i> Target</th>
+                                   @*  <th><i class="bi bi-lock"></i> Encryption</th> *@
+                                   @*  <th><i class="bi bi-file-medical"></i> FHIR</th> *@
+                                    <th><i class="bi bi-activity"></i> Status</th>
+                                    <th><i class="bi bi-clock"></i> Created</th>
+                                    <th><i class="bi bi-gear"></i> Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var request in Model.ConnectorRequests ?? Enumerable.Empty<HealthDataGateway.Data.Models.ConnectorRequest>())
+                                {
                                     <tr>
-                                        <th><i class="bi bi-hash"></i> ID</th>
-                                        <th><i class="bi bi-person"></i> Patient</th>
-                                        <th><i class="bi bi-building"></i> Source</th>
-                                        <th><i class="bi bi-building"></i> Target</th>
-                                        <th><i class="bi bi-lock"></i> Encryption</th>
-                                        <th><i class="bi bi-file-medical"></i> FHIR</th>
-                                        <th><i class="bi bi-activity"></i> Status</th>
-                                        <th><i class="bi bi-clock"></i> Created</th>
-                                        <th><i class="bi bi-gear"></i> Action</th>
+                                        <td><strong>#@request.ConnectorRequestId</strong></td>
+                                        <td><span class="fw-semibold">@request.TransferRequest?.Patient?.FullName  "N/A"</span></td>
+                                        <td><span class="badge bg-info text-dark"><i class="bi bi-house"></i> @request.TransferRequest?.SourceHospital?.HospitalName </span></td>
+                                        <td><span class="badge bg-primary"><i class="bi bi-house-fill"></i> @request.TransferRequest?.TargetHospital?.HospitalName </span></td>
+                                        @* <td><span class="badge bg-success"><i class="bi bi-shield-lock"></i> @request.EncryptionType</span></td> *@
+                                        @* <td class="text-center">
+                                            <span class="badge @(request.IsFHIRCompliant ? "bg-success" : "bg-warning")">
+                                                @(request.IsFHIRCompliant ? "Yes" : "No")
+                                            </span>
+                                        </td> *@
+                                        <td>
+                                            @if (request.Status == "PROCESSING")
+                                            {
+                                                <span class="badge table-status-badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                                                    <i class="bi bi-hourglass-split"></i> PROCESSING
+                                                </span>
+                                            }
+                                            else if (request.Status == "DELIVERED")
+                                            {
+                                                <span class="badge table-status-badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                                                    <i class="bi bi-check-circle-fill"></i> DELIVERED
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge table-status-badge" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: #333;">
+                                                    @request.Status
+                                                </span>
+                                            }
+                                        </td>
+                                        <td><small class="text-muted">@request.CreatedAt.ToString("MMM dd, HH:mm")</small></td>
+                                        <td>
+                                            @if (request.Status == "PROCESSING")
+                                            {
+                                                <form method="post" asp-page-handler="Deliver" class="d-inline">
+                                                    <input type="hidden" name="connectorRequestId" value="@request.ConnectorRequestId" />
+                                                    <input type="hidden" name="targetHospitalId" value="@request.TransferRequest?.TargetHospitalId" />
+                                                    <button type="submit" class="btn btn-deliver" onclick="return confirm('Deliver this request?')">
+                                                        <i class="bi bi-send-fill"></i> Deliver
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">-</span>
+                                            }
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var request in Model.ConnectorRequests)
-                                    {
-                                        <tr>
-                                            <td><strong>#@request.ConnectorRequestId</strong></td>
-                                            <td>
-                                                <span class="fw-semibold">@request.TransferRequest.Patient.FullName</span>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-info text-dark">
-                                                    <i class="bi bi-house"></i> @request.TransferRequest.SourceHospital.HospitalName
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-primary">
-                                                    <i class="bi bi-house-fill"></i> @request.TransferRequest.TargetHospital.HospitalName
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-success">
-                                                    <i class="bi bi-shield-lock"></i> @request.EncryptionType
-                                                </span>
-                                            </td>
-                                            <td class="text-center">
-                                                @if (request.IsFHIRCompliant)
-                                                {
-                                                    <span class="badge bg-success">
-                                                        <i class="bi bi-check-circle-fill"></i> Yes
-                                                    </span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-warning">
-                                                        <i class="bi bi-x-circle-fill"></i> No
-                                                    </span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (request.Status == "PROCESSING")
-                                                {
-                                                    <span class="badge table-status-badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                                                        <i class="bi bi-hourglass-split"></i> PROCESSING
-                                                    </span>
-                                                }
-                                                else if (request.Status == "DELIVERED")
-                                                {
-                                                    <span class="badge table-status-badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
-                                                        <i class="bi bi-check-circle-fill"></i> DELIVERED
-                                                    </span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge table-status-badge" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: #333;">
-                                                        <i class="bi bi-x-circle-fill"></i> FAILED
-                                                    </span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <small class="text-muted">@request.CreatedAt.ToString("MMM dd, HH:mm")</small>
-                                            </td>
-                                            <td>
-                                                @if (request.Status == "PROCESSING")
-                                                {
-                                                    <form method="post" asp-page-handler="Deliver" class="d-inline">
-                                                        <input type="hidden" name="connectorRequestId" value="@request.ConnectorRequestId" />
-                                                        <input type="hidden" name="targetHospitalId" value="@request.TransferRequest.TargetHospitalId" />
-                                                        <button type="submit" class="btn btn-sm btn-deliver"
-                                                                onclick="return confirm('Deliver this encrypted request to target hospital?')">
-                                                            <i class="bi bi-send-fill"></i> Deliver
-                                                        </button>
-                                                    </form>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted small">-</span>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                }
+                            </tbody>
+                        </table>
                     }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.connector-nav-link').forEach(link => {
+        const filter = new URLSearchParams(window.location.search).get('filter');
+        if (!filter && link.getAttribute('href') === '/Connector/Index') link.classList.add('active');
+        if (filter && link.getAttribute('href') && link.getAttribute('href').includes(filter)) link.classList.add('active');
+    });
+</script>

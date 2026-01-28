@@ -1,14 +1,13 @@
-using HealthDataGateway.Data.Models;
-using HealthDataGateway.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using HealthDataGateway.Services.Interfaces;
+using HealthDataGateway.Data.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace HealthDataGateway.Web.Pages.Connector
 {
-   
     public class IndexModel : PageModel
     {
         private readonly IConnectorService _connectorService;
@@ -23,13 +22,25 @@ namespace HealthDataGateway.Web.Pages.Connector
         public int DeliveredCount { get; set; }
         public int FailedCount { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public string Filter { get; set; }
+
         public async Task OnGetAsync()
         {
-            ConnectorRequests = await _connectorService.GetAllConnectorRequestsAsync();
+            var all = await _connectorService.GetAllConnectorRequestsAsync();
 
-            ProcessingCount = ConnectorRequests.FindAll(c => c.Status == "PROCESSING").Count;
-            DeliveredCount = ConnectorRequests.FindAll(c => c.Status == "DELIVERED").Count;
-            FailedCount = ConnectorRequests.FindAll(c => c.Status == "FAILED").Count;
+            ProcessingCount = all.Count(c => c.Status == "PROCESSING");
+            DeliveredCount = all.Count(c => c.Status == "DELIVERED");
+            FailedCount = all.Count(c => c.Status == "FAILED");
+
+            if (!string.IsNullOrWhiteSpace(Filter))
+            {
+                ConnectorRequests = all.Where(c => c.Status == Filter.ToUpperInvariant()).ToList();
+            }
+            else
+            {
+                ConnectorRequests = all;
+            }
         }
 
         public async Task<IActionResult> OnPostDeliverAsync(int connectorRequestId, int targetHospitalId)

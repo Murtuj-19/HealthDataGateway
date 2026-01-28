@@ -9,6 +9,7 @@ namespace HealthDataGateway.Services.Constants
             public const string Sent = "SENT";
             public const string Accepted = "ACCEPTED";
             public const string Cancelled = "CANCELLED";
+            public const string Rejected = "REJECTED";
         }
 
         public static class Connector

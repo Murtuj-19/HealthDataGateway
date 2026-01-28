@@ -1,13 +1,11 @@
-using HealthDataGateway.Data.Models;
-using HealthDataGateway.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using HealthDataGateway.Services.Interfaces;
+using HealthDataGateway.Data.Models;
 using System.Threading.Tasks;
 
 namespace HealthDataGateway.Web.Pages.TargetHospital
 {
-    [Authorize(Roles = "TargetHospital")]
     public class ViewRequestModel : PageModel
     {
         private readonly ITargetHospitalService _targetHospitalService;

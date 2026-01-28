@@ -1,6 +1,8 @@
 using HealthDataGateway.Data;
+using HealthDataGateway.Services;
 using HealthDataGateway.Services.Implementation;
 using HealthDataGateway.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,8 @@ builder.Services.AddScoped<ITransferService, TransferService>();
 builder.Services.AddScoped<IConnectorService, ConnectorService>();
 builder.Services.AddScoped<ITargetHospitalService, TargetHospitalService>();
 
+
+
 // Session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -27,6 +31,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
 
 var app = builder.Build();
 
@@ -43,6 +48,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseSession();
+
 
 app.MapRazorPages();
 

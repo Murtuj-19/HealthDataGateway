@@ -373,9 +373,11 @@
                     <i class="bi bi-hourglass-split"></i>
                     <span>Processing</span>
                 </a>
-                <a href="/Connector/Index?filter=DELIVERED" class="connector-nav-link @(Model.Filter == "DELIVERED" ? "active" : "")">
+                <a href="/Connector/Index?filter=TRANSFERRED" class="connector-nav-link @(Model.Filter == "TRANSFERRED" ? "active" : "")">
                     <i class="bi bi-check-circle-fill"></i>
-                    <span>Delivered</span>
+                    <span>TRANSFERRED
+
+                    </span>
                 </a>
             </div>
 
@@ -397,7 +399,7 @@
                 </div>
                 <div class="status-box delivered">
                     <span class="num">@Model.DeliveredCount</span>
-                    <span class="label"><i class="bi bi-check-circle"></i> Delivered</span>
+                    <span class="label"><i class="bi bi-check-circle"></i> TRANSFERRED</span>
                 </div>
             </div>
 
@@ -471,10 +473,10 @@
                                                     <i class="bi bi-hourglass-split"></i> PROCESSING
                                                 </span>
                                             }
-                                            else if (request.Status == "DELIVERED")
+                                            else if (request.Status == "TRANSFERRED")
                                             {
                                                 <span class="badge table-status-badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
-                                                    <i class="bi bi-check-circle-fill"></i> DELIVERED
+                                                    <i class="bi bi-check-circle-fill"></i> TRANSFERRED
                                                 </span>
                                             }
                                             else
@@ -491,8 +493,8 @@
                                                 <form method="post" asp-page-handler="Deliver" class="d-inline">
                                                     <input type="hidden" name="connectorRequestId" value="@request.ConnectorRequestId" />
                                                     <input type="hidden" name="targetHospitalId" value="@request.TransferRequest?.TargetHospitalId" />
-                                                    <button type="submit" class="btn btn-deliver" onclick="return confirm('Deliver this request?')">
-                                                        <i class="bi bi-send-fill"></i> Deliver
+                                                    <button type="submit" class="btn btn-deliver" onclick="return confirm('TRANSFER this request?')">
+                                                        <i class="bi bi-send-fill"></i> TRANSFER
                                                     </button>
                                                 </form>
                                             }

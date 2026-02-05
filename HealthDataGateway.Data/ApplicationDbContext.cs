@@ -185,8 +185,8 @@ namespace HealthDataGateway.Data
 
             // Seed Data
             modelBuilder.Entity<Hospital>().HasData(
-                new Hospital { HospitalId = 1, HospitalName = "City General Hospital", IsActive = true, CreatedAt = DateTime.Now },
-                new Hospital { HospitalId = 2, HospitalName = "St. Mary's Medical Center", IsActive = true, CreatedAt = DateTime.Now }
+                new Hospital { HospitalId = 1, HospitalName = "Apolo Hyd Branch", IsActive = true, CreatedAt = DateTime.Now },
+                new Hospital { HospitalId = 2, HospitalName = "Apolo Mumbai Branch", IsActive = true, CreatedAt = DateTime.Now }
                 
             );
         }

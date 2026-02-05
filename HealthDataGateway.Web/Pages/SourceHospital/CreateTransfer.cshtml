@@ -194,22 +194,28 @@
                     <h5>
                         <i class="bi bi-person-vcard"></i> Patient Information
                     </h5>
+
+                    <!-- Name (UNCHANGED) -->
                     <div class="info-row">
                         <span class="info-label"><i class="bi bi-person"></i> Name:</span>
                         <span class="info-value fw-bold">@Model.Patient.FullName</span>
                     </div>
+
+                    <!-- Patient ID (UNCHANGED) -->
                     <div class="info-row">
                         <span class="info-label"><i class="bi bi-hash"></i> Patient ID:</span>
                         <span class="info-value">
                             <span class="badge bg-primary">@Model.Patient.LocalPatientId</span>
                         </span>
                     </div>
+
+                    <!-- DOB (MASKED) -->
                     <div class="info-row">
                         <span class="info-label"><i class="bi bi-calendar"></i> Date of Birth:</span>
                         <span class="info-value">
                             @if (Model.Patient.DOB.HasValue)
                             {
-                                <text>@Model.Patient.DOB.Value.ToString("MMM dd, yyyy") (age: @(DateTime.Now.Year - Model.Patient.DOB.Value.Year))</text>
+                                <text>**** @Model.Patient.DOB.Value.Year</text>
                             }
                             else
                             {
@@ -217,28 +223,10 @@
                             }
                         </span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label"><i class="bi bi-gender-ambiguous"></i> Gender:</span>
-                        <span class="info-value">
-                            @if (Model.Patient.Gender == "M")
-                            {
-                                <span>Male</span>
-                            }
-                            else if (Model.Patient.Gender == "F")
-                            {
-                                <span>Female</span>
-                            }
-                            else if (Model.Patient.Gender == "O")
-                            {
-                                <span>Other</span>
-                            }
-                            else
-                            {
-                                <span class="text-muted">Not specified</span>
-                            }
-                        </span>
-                    </div>
+
+                    
                 </div>
+
 
                 <!-- Medical Diagnoses Section -->
                 @if (Model.Patient.Diagnoses != null && Model.Patient.Diagnoses.Any())
@@ -266,7 +254,7 @@
                     <i class="bi bi-shield-lock"></i>
                     <div>
                         <strong>Secure Transfer:</strong>
-                        <small>Patient data will be encrypted using AES-256 before transmission. Full HIPAA compliance.</small>
+                        <small>Patient data will be encrypted using AES-256 before transmission.  </small>
                     </div>
                 </div>
 

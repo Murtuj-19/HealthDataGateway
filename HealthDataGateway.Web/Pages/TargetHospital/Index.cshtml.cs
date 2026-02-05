@@ -1,11 +1,12 @@
-using HealthDataGateway.Services.Interfaces;
+﻿using HealthDataGateway.Services.Interfaces;
 using HealthDataGateway.Data.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-
+//using Microsoft.AspNetCore.Mvc;
+using System.IO;
 namespace HealthDataGateway.Web.Pages.TargetHospital
 {
     public class IndexModel : PageModel
@@ -43,6 +44,21 @@ namespace HealthDataGateway.Web.Pages.TargetHospital
             {
                 IncomingRequests = all;
             }
+        }
+        public IActionResult OnGetJson()
+        {
+            var path = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot", "data", "hospital2.txt");
+
+            if (!System.IO.File.Exists(path))
+            {
+                return Content("JSON file not found");
+            }
+
+            var bytes = System.IO.File.ReadAllBytes(path);
+
+            return File(bytes, "text/plain");
         }
     }
 }

@@ -30,7 +30,7 @@ namespace HealthDataGateway.Web.Pages.Connector
             var all = await _connectorService.GetAllConnectorRequestsAsync();
 
             ProcessingCount = all.Count(c => c.Status == "PROCESSING");
-            DeliveredCount = all.Count(c => c.Status == "DELIVERED");
+            DeliveredCount = all.Count(c => c.Status == "TRANSFERRED");
             FailedCount = all.Count(c => c.Status == "FAILED");
 
             if (!string.IsNullOrWhiteSpace(Filter))

@@ -15,7 +15,7 @@ namespace HealthDataGateway.Services.Constants
         public static class Connector
         {
             public const string Processing = "PROCESSING";
-            public const string Delivered = "DELIVERED";
+            public const string Delivered = "TRANSFERRED"; 
             public const string Failed = "FAILED";
         }
 
